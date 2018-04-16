@@ -1,0 +1,3 @@
+%% Feature Extration Code (taken from HW3)
+% gets the numbe
+NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
