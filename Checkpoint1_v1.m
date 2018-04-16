@@ -33,3 +33,5 @@ end
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
+window = winLen*fs;
+[s,f,t] = spectrogram(signal,window,[],[],fs);
