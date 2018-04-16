@@ -29,7 +29,7 @@ winDisp = 50 * 1e-3;
 %subject 1
 sub1tdv = cell(1,62,1);
 for i = 1:62
-   sub1tdv{1,i,1} = MovingWinFeats(, fs, winLen, winDisp, tdvFxn);
+   sub1tdv{1,i,1} = MovingWinFeats(Sub1_Training_ecog{1,i,1}, fs, winLen, winDisp, tdvFxn);
 end
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
