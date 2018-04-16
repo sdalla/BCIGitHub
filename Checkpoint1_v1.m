@@ -19,4 +19,6 @@ energyFxn =@(x) sum(x.^2);
 zxFxn = @(x) sum((x(1:end-1)-mean(x)).*(x(2:end)-mean(x))<=0);
 %% Feature Extraction (Average Time-Domain Voltage)
 
-%% Feature Extraction (Average Frequency-Domain Magnitude)
+%% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
+% Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
+% Total number of features in given time window is (num channels)*(5+1)
