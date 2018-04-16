@@ -38,10 +38,28 @@ window = winLen*fs;
 
 %subject 1
 for i = 1:62
+<<<<<<< HEAD
 [s,f,t] = spectrogram(Sub1_training_ecog{1,1,1},window,[],[],fs);
 sub1f5_15{i} = mean(s(f(f>5)<15,:));
 sub1f20_25{i} = mean(s(f(f>20)<25,:));
 sub1f75_115{i} = mean(s(f(f>75)<115,:));
 sub1f125_160{i} = mean(s(f(f>125)<160,:));
 sub1f160_175{i} = mean(s(f(f>160)<175,:));
+=======
+[s,f,t] = spectrogram(Sub1_training_ecog{1,1,1},window,winDisp*fs,[],fs);
+    sub1f5_15{i} = mean(s(f(f>5)<15,:));
+    sub1f20_25{i} = mean(s(f(f>20)<25,:));
+    sub1f75_115{i} = mean(s(f(f>75)<115,:));
+    sub1f125_160{i} = mean(s(f(f>125)<160,:));
+    sub1f160_175{i} = mean(s(f(f>160)<175,:));
+>>>>>>> 801a1b9d3eeb97266a494be61a3d1844696e4862
+end
+
+%% Decimation of dataglove
+load('Sub1_Training_dg.mat');
+% decimated glove data for subject one
+% take out the last value to match our 5999
+sub1DataGlove = cell(1,5);
+for i = 1:5
+    sub1DataGlove{i} = decimate(Sub1_Training_dg{i},50);
 end
