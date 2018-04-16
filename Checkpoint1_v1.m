@@ -35,4 +35,13 @@ end
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
 window = winLen*fs;
-[s,f,t] = spectrogram(signal,window,[],[],fs);
+
+%subject 1
+for i = 1:62
+[s,f,t] = spectrogram(Sub1_training_ecog{1,1,1},window,[],[],fs);
+sub1f5_15{i} = mean(s(f(f>5)<15,:));
+sub1f20_25{i} = mean(s(f(f>20)<25,:));
+sub1f75_115{i} = mean(s(f(f>75)<115,:));
+sub1f125_160{i} = mean(s(f(f>125)<160,:));
+sub1f160_175{i} = mean(s(f(f>160)<175,:));
+end
