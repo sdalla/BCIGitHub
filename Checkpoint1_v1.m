@@ -1,7 +1,7 @@
 
 %% Feature Extration Code (taken from HW3)
 % gets the number of windows given the length and displacement
-% winLen and winDisp are in time, fs is sampling freq, xLen is length in
+% winLen and winDisp are in time(s), fs is sampling freq, xLen is length in
 % samples
 xLen = 300000;
 fs = 1000;
