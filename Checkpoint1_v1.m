@@ -48,3 +48,8 @@ end
 
 %% Decimation of dataglove
 load('Sub1_Training_dg.mat');
+% decimated glove data for subject one
+sub1DataGlove = cell(1,5);
+for i = 1:5
+    sub1DataGlove{i} = decimate(Sub1_Training_dg{i},50);
+end
