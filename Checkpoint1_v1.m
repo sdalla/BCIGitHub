@@ -1,5 +1,5 @@
 
-%% Feature Extration Code (taken from HW3)
+%% Feature Extraction Code (taken from HW3)
 % gets the number of windows given the length and displacement
 % winLen and winDisp are in time(s), fs is sampling freq, xLen is length in
 % samples
@@ -17,4 +17,6 @@ areaFxn = @(x) sum(abs(x));
 energyFxn =@(x) sum(x.^2);
 % Zero crossings around mean
 zxFxn = @(x) sum((x(1:end-1)-mean(x)).*(x(2:end)-mean(x))<=0);
-%%
+%% Feature Extraction (Average Time-Domain Voltage)
+
+%% Feature Extraction (Average Frequency-Domain Magnitude)
