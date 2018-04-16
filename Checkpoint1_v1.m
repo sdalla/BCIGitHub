@@ -3,6 +3,10 @@
 % gets the number of windows given the length and displacement
 % winLen and winDisp are in time, fs is sampling freq, xLen is length in
 % samples
+xLen = 300000;
+fs = 1000;
+winLen = 100 * 1e-3;
+winDisp = 50 * 1e-3;
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
 % Line length fxn
