@@ -38,7 +38,7 @@ window = winLen*fs;
 
 %subject 1
 for i = 1:62
-[s,f,t] = spectrogram(Sub1_training_ecog{1,1,1},window,winDisp*fs,[],fs);
+    [s,f,t] = spectrogram(Sub1_training_ecog{1,1,1},window,winDisp*fs,[],fs);
     sub1f5_15{i} = mean(s(f(f>5)<15,:));
     sub1f20_25{i} = mean(s(f(f>20)<25,:));
     sub1f75_115{i} = mean(s(f(f>75)<115,:));
@@ -53,6 +53,7 @@ load('Sub1_Training_dg.mat');
 sub1DataGlove = cell(1,5);
 for i = 1:5
     sub1DataGlove{i} = decimate(Sub1_Training_dg{i},50);
+<<<<<<< HEAD
 end
 
 %% Formation of the X matrix
@@ -80,3 +81,14 @@ end
 f = zeros(62*N+1,2);
 f(:,1) = mldivide(mldivide(X,X),mldivide(R,s(:,1)));
 f(:,2) = mldivide(mldivide(X,X),mldivide(R,s(:,2)));
+=======
+    sub1DataGlove{i}(end)= [];
+end
+
+
+
+%% spline stuff
+
+interp = 1/fs:1/fs:300;
+sub1Spline = spline(time,ypred,interp);
+>>>>>>> d20facf81fcb6b92f2e5c964b0aee6acc6296412
