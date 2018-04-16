@@ -54,3 +54,29 @@ sub1DataGlove = cell(1,5);
 for i = 1:5
     sub1DataGlove{i} = decimate(Sub1_Training_dg{i},50);
 end
+
+%% Formation of the X matrix
+% Referenced form HW7
+% 62 channels ~ 40 neurons (HW7)
+v = 62; % 62 channels
+N = 3; % 3 time windows 
+f = 6; % 6 features
+X = zeros(5999,v*N*f+1);
+
+% for m = 1:5999
+%     disp(m);
+%     X(m,:) = [1 reshape(sub1tdv{:}(m:(m+N-1)),1,62*N)];
+% end
+for j = 1:62
+    disp(j)
+    for i = 1:5999-N+1
+        % error with sub1f20_25 input
+    	X(i,((j-1)*N*f+1):(j*N*f)) = [sub1tdv{j}(i:(i+N-1)) sub1f5_15{j}(i:(i+N-1)) sub1f20_25{j}(i:(i+N-1)) ...
+            sub1f75_115{j}(i:(i+N-1)) sub1f125_160{j}(i:(i+N-1)) sub1f160_175{j}(i:(i+N-1))]; %insert data into R
+    end
+end
+
+%% Calculation
+f = zeros(62*N+1,2);
+f(:,1) = mldivide(mldivide(X,X),mldivide(R,s(:,1)));
+f(:,2) = mldivide(mldivide(X,X),mldivide(R,s(:,2)));
