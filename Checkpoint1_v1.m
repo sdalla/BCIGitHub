@@ -18,7 +18,19 @@ energyFxn =@(x) sum(x.^2);
 % Zero crossings around mean
 zxFxn = @(x) sum((x(1:end-1)-mean(x)).*(x(2:end)-mean(x))<=0);
 %% Feature Extraction (Average Time-Domain Voltage)
+load(
+tdvFxn = @(x) mean(x);
 
+xLen = 300000;
+fs = 1000;
+winLen = 100 * 1e-3;
+winDisp = 50 * 1e-3;
+
+%subject 1
+sub1tdv = cell(1,62,1);
+for i = 1:62
+   sub1tdv{1,i,1} = MovingWinFeats(, fs, winLen, winDisp, tdvFxn);
+end
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
