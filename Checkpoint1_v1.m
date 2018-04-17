@@ -93,6 +93,7 @@ sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
 sub1_predict = sub1X*sub1_weight;
 
 
+<<<<<<< HEAD
 
 %% spline stuff
 
@@ -101,3 +102,12 @@ time = 1/fs:50/fs:300-50/fs;
 sub1Spline = spline(time,sub1_predict(:,1),interp);
 
 
+=======
+%% spline stuff
+
+
+time = 50/fs:50/fs:300;
+% the first 50ms we dont have predictions for, will zero pad at the end
+interp = linspace(time(1),time(end),300000-0.05*fs);
+sub1Spline = spline(time,ypred,interp);
+>>>>>>> c20ddcd7173afe8531d26f61d041faa170333926
