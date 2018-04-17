@@ -81,7 +81,9 @@ sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1Data
 %sub1_weight = zeros(62*N+1,5);
 sub1X = real(sub1X);
 %sub1_weight = mldivide(mldivide(sub1X,sub1X),mldivide(R,sub1fingerflexion));
-sub1_weight = mldivide((sub1X(1:3000,:).'*sub1X(1:3000,:)),(sub1X(1:3000,:).'*sub1fingerflexion(1:3000,:)));
+%sub1_weight = mldivide((sub1X(1:3000,:).'*sub1X(1:3000,:)),(sub1X(1:3000,:).'*sub1fingerflexion(1:3000,:)));
+sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
+
 sub1_predict = sub1X(3001:end,:)*sub1_weight;
 
 
