@@ -98,5 +98,10 @@ sub1_predict = sub1X*sub1_weight;
 %% spline stuff
 
 interp = 1/fs:1/fs:300;
+<<<<<<< Updated upstream
 sub1Spline = spline(time,ypred,interp);
 >>>>>>> d20facf81fcb6b92f2e5c964b0aee6acc6296412
+=======
+time = 1/fs:50/fs:300;
+sub1Spline = spline(time,ypred,interp);
+>>>>>>> Stashed changes
