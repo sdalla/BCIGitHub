@@ -97,5 +97,6 @@ sub1_predict = sub1X*sub1_weight;
 
 
 time = 50/fs:50/fs:300;
-interp = linspace(time(1),time(end),5999);
+% the first 50ms we dont have predictions for, will zero pad at the end
+interp = linspace(time(1),time(end),300000-0.05*fs);
 sub1Spline = spline(time,ypred,interp);
