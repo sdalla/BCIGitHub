@@ -53,7 +53,7 @@ load('Sub1_Training_dg.mat');
 sub1DataGlove = cell(1,5);
 for i = 1:5
     sub1DataGlove{i} = decimate(Sub1_Training_dg{i},50);
-<<<<<<< HEAD
+    sub1DataGlove{i}(end)= [];
 end
 
 %% Formation of the X matrix
@@ -62,7 +62,7 @@ end
 v = 62; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
-X = zeros(5999,v*N*f+1);
+sub1X = zeros(5999,v*N*f+1);
 
 % for m = 1:5999
 %     disp(m);
@@ -72,7 +72,7 @@ for j = 1:62
     %disp(j);
     for i = 1:5999-N+1
         % error with sub1f20_25 input
-    	X(i,((j-1)*N*f+1):(j*N*f)) = [sub1tdv{j}(i:(i+N-1)) sub1f5_15{j}(i:(i+N-1)) sub1f20_25{j}(i:(i+N-1)) ...
+    	sub1X(i,((j-1)*N*f+1):(j*N*f)) = [sub1tdv{j}(i:(i+N-1)) sub1f5_15{j}(i:(i+N-1)) sub1f20_25{j}(i:(i+N-1)) ...
             sub1f75_115{j}(i:(i+N-1)) sub1f125_160{j}(i:(i+N-1)) sub1f160_175{j}(i:(i+N-1))]; %insert data into R
     end
 end
@@ -81,21 +81,22 @@ end
 f = zeros(62*N+1,2);
 f(:,1) = mldivide(mldivide(X,X),mldivide(R,s(:,1)));
 f(:,2) = mldivide(mldivide(X,X),mldivide(R,s(:,2)));
-=======
-    sub1DataGlove{i}(end)= [];
+
+    
     
     %% Calculation - Shira
-fingerflexion = [sub1DataGlove{1}; sub1DataGlove{2}; sub1DataGlove{3}; sub1DataGlove{4}; sub1DataGlove{5}]
-f = zeros(62*N+1,2);
-f(:,1) = mldivide(mldivide(X,X),mldivide(R,fing
-=======
-    sub1DataGlove{i}(end)= [];
-end
+sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
+sub1_weight = zeros(62*N+1,5);
+%sub1_weight = mldivide(mldivide(sub1X,sub1X),mldivide(R,sub1fingerflexion));
+sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
+sub1_predict = sub1X*sub1_weight;
+
 
 
 
 %% spline stuff
 
 interp = 1/fs:1/fs:300;
+
 sub1Spline = spline(time,ypred,interp);
->>>>>>> d20facf81fcb6b92f2e5c964b0aee6acc6296412
+time = 1/fs:50/fs:300;

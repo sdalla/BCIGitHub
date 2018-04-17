@@ -53,8 +53,7 @@ load('Sub1_Training_dg.mat');
 sub1DataGlove = cell(1,5);
 for i = 1:5
     sub1DataGlove{i} = decimate(Sub1_Training_dg{i},50);
-     sub1DataGlove{i}(end)= [];
-%<<<<<<< HEAD
+    sub1DataGlove{i}(end)= [];
 end
 
 %% Formation of the X matrix
@@ -82,8 +81,8 @@ end
 f = zeros(62*N+1,2);
 f(:,1) = mldivide(mldivide(X,X),mldivide(R,s(:,1)));
 f(:,2) = mldivide(mldivide(X,X),mldivide(R,s(:,2)));
-=======
-    sub1DataGlove{i}(end)= [];
+
+    
     
     %% Calculation - Shira
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
@@ -91,17 +90,13 @@ sub1_weight = zeros(62*N+1,5);
 %sub1_weight = mldivide(mldivide(sub1X,sub1X),mldivide(R,sub1fingerflexion));
 sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
 sub1_predict = sub1X*sub1_weight;
-%end
+
 
 
 
 %% spline stuff
 
 interp = 1/fs:1/fs:300;
-<<<<<<< Updated upstream
+
 sub1Spline = spline(time,ypred,interp);
->>>>>>> d20facf81fcb6b92f2e5c964b0aee6acc6296412
-=======
 time = 1/fs:50/fs:300;
-sub1Spline = spline(time,ypred,interp);
->>>>>>> Stashed changes
