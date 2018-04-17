@@ -70,20 +70,22 @@ sub1X = ones(5999,v*N*f+1);
 % end
 for j = 1:62
     %disp(j);
-    for i = 1:5999-N+1
+    for i = N:5999
         % error with sub1f20_25 input
-    	sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1tdv{j}(i:(i+N-1)) sub1f5_15{j}(i:(i+N-1)) sub1f20_25{j}(i:(i+N-1)) ...
-            sub1f75_115{j}(i:(i+N-1)) sub1f125_160{j}(i:(i+N-1)) sub1f160_175{j}(i:(i+N-1))]; %insert data into R
+    	sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
+            sub1f75_115{j}(i-N+1:i) sub1f125_160{j}(i-N+1:i) sub1f160_175{j}(i-N+1:i)]; %insert data into R
     end
 end
 
-
+sub1X(1:2,:) = [];
     
     %% Calculation - Shira
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
-sub1_weight = zeros(62*N+1,5);
+%sub1_weight = zeros(62*N+1,5);
 sub1X = real(sub1X);
-sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
+arg1 = (sub1X'*sub1X);
+arg2 = (sub1X'*sub1fingerflexion(N:end,:));
+sub1_weight = mldivide(arg1,arg2);
 sub1_predict = sub1X*sub1_weight;
 
 
