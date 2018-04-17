@@ -77,12 +77,7 @@ for j = 1:62
     end
 end
 
-%% Calculation
-f = zeros(62*N+1,2);
-f(:,1) = mldivide(mldivide(X,X),mldivide(R,s(:,1)));
-f(:,2) = mldivide(mldivide(X,X),mldivide(R,s(:,2)));
 
-    
     
     %% Calculation - Shira
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
