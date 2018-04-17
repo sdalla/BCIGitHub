@@ -93,12 +93,16 @@ sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
 sub1_predict = sub1X*sub1_weight;
 
 
-
+%%
+interp = 1/fs:1/fs:300;
+time = 1/fs:50/fs:300;
+sub1Spline = spline(time,sub1_predict,interp);
 
 %% spline stuff
 
 interp = 1/fs:1/fs:300;
-
-sub1Spline = spline(time,ypred,interp);
 time = 1/fs:50/fs:300;
+sub1Spline = spline(time,ypred,interp);
+
+
 
