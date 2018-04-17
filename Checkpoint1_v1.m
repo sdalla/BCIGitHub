@@ -97,6 +97,6 @@ sub1_predict = sub1X*sub1_weight;
 %% spline stuff
 
 interp = 1/fs:1/fs:300;
-
+time = 1/fs:50/fs:300-50/fs;
 sub1Spline = spline(time,ypred,interp);
-time = 1/fs:50/fs:300;
+
