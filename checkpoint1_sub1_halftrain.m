@@ -76,7 +76,7 @@ end
 
 
     
-    %% Calculation - Shira
+%% Calculation - Shira method
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
 %sub1_weight = zeros(62*N+1,5);
 sub1X = real(sub1X);
