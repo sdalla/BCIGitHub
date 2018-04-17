@@ -39,11 +39,11 @@ window = winLen*fs;
 %subject 1
 for i = 1:62
     [s,f,t] = spectrogram(Sub1_training_ecog{1,1,1},window,winDisp*fs,[],fs);
-    sub1f5_15{i} = mean(s(f(f>5)<15,:));
-    sub1f20_25{i} = mean(s(f(f>20)<25,:));
-    sub1f75_115{i} = mean(s(f(f>75)<115,:));
-    sub1f125_160{i} = mean(s(f(f>125)<160,:));
-    sub1f160_175{i} = mean(s(f(f>160)<175,:));
+    sub1f5_15{i} = mean(s(f(f>5)<15,:),1);
+    sub1f20_25{i} = mean(s(f(f>20)<25,:),1);
+    sub1f75_115{i} = mean(s(f(f>75)<115,:),1);
+    sub1f125_160{i} = mean(s(f(f>125)<160,:),1);
+    sub1f160_175{i} = mean(s(f(f>160)<175,:),1);
 end
 
 %% Decimation of dataglove
