@@ -53,11 +53,7 @@ load('Sub1_Training_dg.mat');
 sub1DataGlove = cell(1,5);
 for i = 1:5
     sub1DataGlove{i} = decimate(Sub1_Training_dg{i},50);
-<<<<<<< HEAD
     sub1DataGlove{i}(end)= [];
-=======
-     sub1DataGlove{i}(end)= [];
->>>>>>> origin/master
 end
 
 %% Formation of the X matrix
@@ -95,28 +91,11 @@ sub1X = real(sub1X);
 %sub1_weight = mldivide(mldivide(sub1X,sub1X),mldivide(R,sub1fingerflexion));
 sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
 sub1_predict = sub1X*sub1_weight;
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
-
-
-%%
-interp = 1/fs:1/fs:300;
-time = 1/fs:50/fs:300;
-sub1Spline = spline(time,sub1_predict,interp);
 
 %% spline stuff
 
 interp = 1/fs:1/fs:300;
-<<<<<<< HEAD
+
 time = 1/fs:50/fs:300-50/fs;
 sub1Spline = spline(time,ypred,interp);
-
-=======
-time = 1/fs:50/fs:300;
-sub1Spline = spline(time,ypred,interp);
-
-
-
->>>>>>> origin/master
