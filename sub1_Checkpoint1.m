@@ -88,12 +88,15 @@ arg2 = (sub1X'*sub1fingerflexion(N:end,:));
 sub1_weight = mldivide(arg1,arg2);
 sub1_trainpredict = sub1X*sub1_weight;
 
+%% reconstruct R matrix for testing data
 
 %% spline stuff
 
 
-time = 50/fs:50/fs:300;
-% the first 50ms we dont have predictions for, will zero pad at the end
-interp = linspace(time(1),time(end),150000-0.05*fs);
-sub1Spline = spline(time,ypred,sub1_predict);
+
+% will zero pad at the end
+% [1:lastSample].*50 to reconstruct as much as we can then pad to 150k pt
+% sub1_predict is our prediction on our testing data
+% which will be 50th sample to the 2947*50th sample
+sub1Spline = spline(1:length(sub1_predict),sub1_predict,50.*(1:length(sub1_predict)));
 
