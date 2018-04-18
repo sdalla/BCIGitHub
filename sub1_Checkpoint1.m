@@ -124,7 +124,7 @@ end
 v = 62; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
-testsub1X = ones(5999,v*N*f+1);
+testsub1X = ones(2499,v*N*f+1);
 
 for j = 1:62
     %disp(j);
