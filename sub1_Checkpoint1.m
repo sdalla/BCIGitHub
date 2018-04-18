@@ -88,15 +88,63 @@ arg2 = (sub1X'*sub1fingerflexion(N:end,:));
 sub1_weight = mldivide(arg1,arg2);
 sub1_trainpredict = sub1X*sub1_weight;
 
-%% reconstruct R matrix for testing data
+%% reconstruct R matrix for testing data, first get features then make R
+%% Feature Extraction of TESTING (Average Time-Domain Voltage)
+load('Sub1_Leaderboard_ecog.mat');
+tdvFxn = @(x) mean(x);
+
+xTestLen = 150000;
+fs = 1000;
+winLen = .1;
+winDisp = .05;
+
+%subject 1
+sub1_testtdv = cell(1,62);
+for i = 1:62
+   sub1_testtdv{i} = MovingWinFeats(Sub1_Leaderboard_ecog{1,i,1}, fs, winLen, winDisp, tdvFxn);
+end
+%% Feature Extraction of TESTING (Average Frequency-Domain Magnitude in 5 bands)
+% Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
+% Total number of features in given time window is (num channels)*(5+1)
+window = winLen*fs;
+freq_arr = 0:5:500;
+%subject 1
+for i = 1:62
+    [s,freq,t] = spectrogram(Sub1_Leaderboard_ecog{1,i,1},window,winDisp*fs,freq_arr,fs);
+    testsub1f5_15{i} = mean(s(2:4,:),1);
+    testsub1f20_25{i} = mean(s(5:6,:),1);
+    testsub1f75_115{i} = mean(s(16:24,:),1);
+    testsub1f125_160{i} = mean(s(26:32,:),1);
+    testsub1f160_175{i} = mean(s(32:36,:),1);
+end
+
+%% Formation of the X matrix but now its for testing set
+% Referenced form HW7
+% 62 channels ~ 40 neurons (HW7)
+v = 62; % 62 channels
+N = 3; % 3 time windows 
+f = 6; % 6 features
+testsub1X = ones(5999,v*N*f+1);
+
+for j = 1:62
+    %disp(j);
+    for i = N:5999
+       
+    	testsub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1_testtdv{j}(i-N+1:i) testsub1f5_15{j}(i-N+1:i) testsub1f20_25{j}(i-N+1:i) ...
+            testsub1f75_115{j}(i-N+1:i) testsub1f125_160{j}(i-N+1:i) testsub1f160_175{j}(i-N+1:i)]; %insert data into R
+    end
+end
+
+testsub1X(1:2,:) = [];
+
+%% make the prediction using the testing R matrix
+testsub1X = abs(testsub1X);
+sub1_testpredict = testsub1X*sub1_weight;
 
 %% spline stuff
-
-
-
 % will zero pad at the end
 % [1:lastSample].*50 to reconstruct as much as we can then pad to 150k pt
 % sub1_predict is our prediction on our testing data
 % which will be 50th sample to the 2947*50th sample
-sub1Spline = spline(1:length(sub1_predict),sub1_predict,50.*(1:length(sub1_predict)));
+sub1Spline = spline(1:length(sub1_testpredict),sub1_testpredict,50.*(1:length(sub1_testpredict)));
 
