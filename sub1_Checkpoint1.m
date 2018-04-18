@@ -124,11 +124,17 @@ end
 v = 62; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
+xLen = 147500;
+fs = 1000;
+winLen = 100 * 1e-3;
+winDisp = 50 * 1e-3;
+NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
+
 testsub1X = ones(NumWins(xLen,fs,winLen,winDisp),v*N*f+1);
 
 for j = 1:62
     %disp(j);
-    for i = N:2499
+    for i = N:NumWins(xLen,fs,winLen,winDisp)
        
     	testsub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1_testtdv{j}(i-N+1:i) testsub1f5_15{j}(i-N+1:i) testsub1f20_25{j}(i-N+1:i) ...
             testsub1f75_115{j}(i-N+1:i) testsub1f125_160{j}(i-N+1:i) testsub1f160_175{j}(i-N+1:i)]; %insert data into R
