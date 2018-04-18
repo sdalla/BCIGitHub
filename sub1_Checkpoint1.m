@@ -38,7 +38,7 @@ window = winLen*fs;
 freq_arr = 0:5:500;
 %subject 1
 for i = 1:62
-    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,1,1},window,winDisp*fs,freq_arr,fs);
+    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i,1},window,winDisp*fs,freq_arr,fs);
     sub1f5_15{i} = mean(s(2:4,:),1);
     sub1f20_25{i} = mean(s(5:6,:),1);
     sub1f75_115{i} = mean(s(16:24,:),1);
@@ -86,7 +86,7 @@ sub1X = abs(sub1X);
 arg1 = (sub1X'*sub1X);
 arg2 = (sub1X'*sub1fingerflexion(N:end,:));
 sub1_weight = mldivide(arg1,arg2);
-sub1_predict = sub1X*sub1_weight;
+sub1_trainpredict = sub1X*sub1_weight;
 
 
 %% spline stuff
