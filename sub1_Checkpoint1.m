@@ -128,7 +128,7 @@ testsub1X = ones(2499,v*N*f+1);
 
 for j = 1:62
     %disp(j);
-    for i = N:5999
+    for i = N:2499
        
     	testsub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1_testtdv{j}(i-N+1:i) testsub1f5_15{j}(i-N+1:i) testsub1f20_25{j}(i-N+1:i) ...
             testsub1f75_115{j}(i-N+1:i) testsub1f125_160{j}(i-N+1:i) testsub1f160_175{j}(i-N+1:i)]; %insert data into R
@@ -146,5 +146,5 @@ sub1_testpredict = testsub1X*sub1_weight;
 % [1:lastSample].*50 to reconstruct as much as we can then pad to 150k pt
 % sub1_predict is our prediction on our testing data
 % which will be 50th sample to the 2947*50th sample
-sub1Spline = spline(1:length(sub1_testpredict),sub1_testpredict,50.*(1:length(sub1_testpredict)));
+sub1Spline = spline(50.*(1:length(sub1_testpredict)),sub1_testpredict',(50:50*length(sub1_testpredict)));
 
