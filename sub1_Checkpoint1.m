@@ -147,4 +147,4 @@ sub1_testpredict = testsub1X*sub1_weight;
 % sub1_predict is our prediction on our testing data
 % which will be 50th sample to the 2947*50th sample
 sub1Spline = spline(50.*(1:length(sub1_testpredict)),sub1_testpredict',(50:50*length(sub1_testpredict)));
-
+% remember to un-transpose sub1_testpredict at the end
