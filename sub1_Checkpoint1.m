@@ -93,7 +93,7 @@ sub1_trainpredict = sub1X*sub1_weight;
 load('Sub1_Leaderboard_ecog.mat');
 tdvFxn = @(x) mean(x);
 
-xTestLen = 150000;
+xTestLen = 147500;
 fs = 1000;
 winLen = .1;
 winDisp = .05;
