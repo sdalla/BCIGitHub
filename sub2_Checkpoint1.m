@@ -36,7 +36,7 @@ end
 % Total number of features in given time window is (num channels)*(5+1)
 window = winLen*fs;
 freq_arr = 0:5:500;
-%subject 1
+%subject 2
 for i = 1:48
     [s,freq,t] = spectrogram(Sub2_Training_ecog{1,i,1},window,winDisp*fs,freq_arr,fs);
     sub2f5_15{i} = mean(s(2:4,:),1);
