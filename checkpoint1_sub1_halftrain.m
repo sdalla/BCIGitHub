@@ -9,14 +9,6 @@ winLen = 100 * 1e-3;
 winDisp = 50 * 1e-3;
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
-% Line length fxn
-LLFn = @(x) sum(abs(diff(x)));
-% Area Fxn
-areaFxn = @(x) sum(abs(x));
-% Energy Fxn
-energyFxn =@(x) sum(x.^2);
-% Zero crossings around mean
-zxFxn = @(x) sum((x(1:end-1)-mean(x)).*(x(2:end)-mean(x))<=0);
 %% Feature Extraction (Average Time-Domain Voltage)
 load('Sub1_Training_ecog.mat');
 tdvFxn = @(x) mean(x);

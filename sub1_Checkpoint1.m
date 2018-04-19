@@ -145,7 +145,7 @@ end
 testsub1X(1:2,:) = [];
 
 %% make the prediction using the testing R matrix
-testsub1X = abs(testsub1X);
+%testsub1X = abs(testsub1X);
 sub1_testpredict = testsub1X*sub1_weight;
 
 %% spline stuff

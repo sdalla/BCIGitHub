@@ -81,7 +81,7 @@ sub3X(1:2,:) = [];
     %% Calculation - Shira
 sub3fingerflexion = [sub3DataGlove{1} sub3DataGlove{2} sub3DataGlove{3} sub3DataGlove{4} sub3DataGlove{5}];
 %sub3_weight = zeros(64*N+1,5);
-sub3X = abs(sub3X);
+%sub3X = abs(sub3X);
 arg1 = (sub3X'*sub3X);
 arg2 = (sub3X'*sub3fingerflexion(N:end,:));
 sub3_weight = mldivide(arg1,arg2);
@@ -144,7 +144,7 @@ end
 testsub3X(1:2,:) = [];
 
 %% make the prediction using the testing R matrix
-testsub3X = abs(testsub3X);
+%testsub3X = abs(testsub3X);
 sub3_testpredict = testsub3X*sub3_weight;
 
 %% spline stuff

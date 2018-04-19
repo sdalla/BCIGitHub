@@ -82,7 +82,7 @@ sub2X(1:2,:) = [];
     %% Calculation - Shira
 sub2fingerflexion = [sub2DataGlove{1} sub2DataGlove{2} sub2DataGlove{3} sub2DataGlove{4} sub2DataGlove{5}];
 %sub2_weight = zeros(48*N+1,5);
-sub2X = abs(sub2X);
+%sub2X = abs(sub2X);
 arg1 = (sub2X'*sub2X);
 arg2 = (sub2X'*sub2fingerflexion(N:end,:));
 sub2_weight = mldivide(arg1,arg2);
@@ -143,7 +143,7 @@ end
 testsub2X(1:2,:) = [];
 
 %% make the prediction using the testing R matrix
-testsub2X = abs(testsub2X);
+%testsub2X = abs(testsub2X);
 sub2_testpredict = testsub2X*sub2_weight;
 
 %% spline stuff
