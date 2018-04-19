@@ -18,7 +18,7 @@ energyFxn =@(x) sum(x.^2);
 % Zero crossings around mean
 zxFxn = @(x) sum((x(1:end-1)-mean(x)).*(x(2:end)-mean(x))<=0);
 %% Feature Extraction (Average Time-Domain Voltage)
-load('Sub1_training_ecog.mat');
+load('Sub1_Training_ecog.mat');
 tdvFxn = @(x) mean(x);
 
 xLen = 300000;
@@ -29,21 +29,21 @@ winDisp = .05;
 %subject 1
 sub1tdv = cell(1,62);
 for i = 1:62
-   sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i,1}, fs, winLen, winDisp, tdvFxn);
+   sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
 end
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
 window = winLen*fs;
-
+freq_arr = 0:1:1000; %change to 0 to 1000 & change indices below
 %subject 1
 for i = 1:62
-    [s,f,t] = spectrogram(Sub1_Training_ecog{1,1,1},window,winDisp*fs,[],fs);
-    sub1f5_15{i} = mean(s(f(f>5)<15,:),1);
-    sub1f20_25{i} = mean(s(f(f>20)<25,:),1);
-    sub1f75_115{i} = mean(s(f(f>75)<115,:),1);
-    sub1f125_160{i} = mean(s(f(f>125)<160,:),1);
-    sub1f160_175{i} = mean(s(f(f>160)<175,:),1);
+    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,freq_arr,fs);
+    sub1f5_15{i} = mean(abs(s(6:16,:)),1);
+    sub1f20_25{i} = mean(abs(s(21:26,:)),1);
+    sub1f75_115{i} = mean(abs(s(76:116,:)),1);
+    sub1f125_160{i} = mean(abs(s(126:161,:)),1);
+    sub1f160_175{i} = mean(abs(s(161:176,:)),1);
 end
 
 %% Decimation of dataglove
@@ -64,41 +64,46 @@ N = 3; % 3 time windows
 f = 6; % 6 features
 sub1X = ones(5999,v*N*f+1);
 
-
+% for m = 1:5999
+%     disp(m);
+%     X(m,:) = [1 reshape(sub1tdv{:}(m:(m+N-1)),1,62*N)];
+% end
 for j = 1:62
     %disp(j);
-    for i = 1:5999-N+1
+    for i = N:5999
         % error with sub1f20_25 input
-    	sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1tdv{j}(i:(i+N-1)) sub1f5_15{j}(i:(i+N-1)) sub1f20_25{j}(i:(i+N-1)) ...
-            sub1f75_115{j}(i:(i+N-1)) sub1f125_160{j}(i:(i+N-1)) sub1f160_175{j}(i:(i+N-1))]; %insert data into R
+    	sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
+            sub1f75_115{j}(i-N+1:i) sub1f125_160{j}(i-N+1:i) sub1f160_175{j}(i-N+1:i)]; %insert data into R
     end
 end
 
-
+sub1X(1:2,:) = [];
     
-%% Calculation - Shira method
+%% Split into test and train
+%sub1X = abs(sub1X);
+sub1X_train = sub1X(1:3000,:);
+sub1X_test = sub1X(3001:end,:);
+%% Calculation 
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
-%sub1_weight = zeros(62*N+1,5);
-sub1X = real(sub1X);
-%sub1_weight = mldivide(mldivide(sub1X,sub1X),mldivide(R,sub1fingerflexion));
+sub1fingerflexion_train = sub1fingerflexion(N:3000+N-1,:);
+sub1fingerflexion_test = sub1fingerflexion(3000+N:end,:);
 
-sub1_weight = mldivide((sub1X(1:3000,:).'*sub1X(1:3000,:)),(sub1X(1:3000,:).'*sub1fingerflexion(1:3000,:)));
-%sub1_weight = mldivide((sub1X.'*sub1X),(sub1X.'*sub1fingerflexion));
 
-sub1_predict = sub1X(3001:end,:)*sub1_weight;
-%% 
-arg1= (sub1X(1:2999,:).'*sub1X(1:2999,:));
-arg2= (sub1X(1:2999,:).'*sub1fingerflexion(1:2999,:));
+arg1 = (sub1X_train'*sub1X_train);
+arg2 = (sub1X_train'*sub1fingerflexion_train);
 sub1_weight = mldivide(arg1,arg2);
-sub1_predict = sub1X(3000:end,:)*sub1_weight;
+sub1_trainpredict = sub1X_train*sub1_weight;
 
 
+sub1_testpredict = sub1X_test*sub1_weight;
 
-
-%% spline stuff
-
-interp = 1/fs:1/fs:300;
-time = 1/fs:50/fs:300-50/fs;
-sub1Spline = spline(time,sub1_predict(:,1),interp);
-
-corr(sub1_predict, sub1fingerflexion(3001:end,1))
+% %% spline stuff
+% % will zero pad at the end
+% % [1:lastSample].*50 to reconstruct as much as we can then pad to 150k pt
+% % sub1_predict is our prediction on our testing data
+% % which will be 50th sample to the 2947*50th sample
+% sub1Spline = spline(50.*(1:length(sub1_testpredict)),sub1_testpredict',(50:50*length(sub1_testpredict)));
+% % remember to un-transpose sub1_testpredict at the end
+% sub1Pad = padarray(sub1Spline, [0 99]);
+% sub1Pad(:,end+1) = 0;
+% sub1Final = sub1Pad';
