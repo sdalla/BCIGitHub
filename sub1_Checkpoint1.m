@@ -18,7 +18,7 @@ energyFxn =@(x) sum(x.^2);
 % Zero crossings around mean
 zxFxn = @(x) sum((x(1:end-1)-mean(x)).*(x(2:end)-mean(x))<=0);
 %% Feature Extraction (Average Time-Domain Voltage)
-load('Sub1_training_ecog.mat');
+load('Sub1_Training_ecog.mat');
 tdvFxn = @(x) mean(x);
 
 xLen = 300000;
@@ -29,7 +29,7 @@ winDisp = .05;
 %subject 1
 sub1tdv = cell(1,62);
 for i = 1:62
-   sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i,1}, fs, winLen, winDisp, tdvFxn);
+   sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
 end
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
@@ -38,7 +38,7 @@ window = winLen*fs;
 freq_arr = 0:5:500;
 %subject 1
 for i = 1:62
-    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i,1},window,winDisp*fs,freq_arr,fs);
+    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,freq_arr,fs);
     sub1f5_15{i} = mean(s(2:4,:),1);
     sub1f20_25{i} = mean(s(5:6,:),1);
     sub1f75_115{i} = mean(s(16:24,:),1);
@@ -79,7 +79,7 @@ end
 
 sub1X(1:2,:) = [];
     
-    %% Calculation - Shira
+    %% Calculation 
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
 %sub1_weight = zeros(62*N+1,5);
 sub1X = abs(sub1X);
@@ -101,7 +101,7 @@ winDisp = .05;
 %subject 1
 sub1_testtdv = cell(1,62);
 for i = 1:62
-   sub1_testtdv{i} = MovingWinFeats(Sub1_Leaderboard_ecog{1,i,1}, fs, winLen, winDisp, tdvFxn);
+   sub1_testtdv{i} = MovingWinFeats(Sub1_Leaderboard_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
 end
 %% Feature Extraction of TESTING (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
@@ -110,7 +110,7 @@ window = winLen*fs;
 freq_arr = 0:5:500;
 %subject 1
 for i = 1:62
-    [s,freq,t] = spectrogram(Sub1_Leaderboard_ecog{1,i,1},window,winDisp*fs,freq_arr,fs);
+    [s,freq,t] = spectrogram(Sub1_Leaderboard_ecog{1,i},window,winDisp*fs,freq_arr,fs);
     testsub1f5_15{i} = mean(s(2:4,:),1);
     testsub1f20_25{i} = mean(s(5:6,:),1);
     testsub1f75_115{i} = mean(s(16:24,:),1);

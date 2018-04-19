@@ -18,7 +18,7 @@ energyFxn =@(x) sum(x.^2);
 % Zero crossings around mean
 zxFxn = @(x) sum((x(1:end-1)-mean(x)).*(x(2:end)-mean(x))<=0);
 %% Feature Extraction (Average Time-Domain Voltage)
-load('Sub3_training_ecog.mat');
+load('Sub3_Training_ecog.mat');
 tdvFxn = @(x) mean(x);
 
 xLen = 300000;
