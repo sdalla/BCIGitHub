@@ -37,8 +37,8 @@ end
 window = winLen*fs;
 freq_arr = 0:1:1000; %change to 0 to 1000 & change indices below
 %subject 1
-for i = 1:62
-    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,freq_arr,fs);
+for i = 1:64
+    [s,freq,t] = spectrogram(Sub3_Training_ecog{1,i},window,winDisp*fs,freq_arr,fs);
     sub3f5_15{i} = mean(abs(s(6:16,:)),1);
     sub3f20_25{i} = mean(abs(s(21:26,:)),1);
     sub3f75_115{i} = mean(abs(s(76:116,:)),1);
@@ -109,11 +109,11 @@ end
 window = winLen*fs;
 freq_arr = 0:1:1000;
 %subject 1
-for i = 1:62
-    [s,freq,t] = spectrogram(Sub1_Leaderboard_ecog{1,i},window,winDisp*fs,freq_arr,fs);
+for i = 1:64
+    [s,freq,t] = spectrogram(Sub3_Leaderboard_ecog{1,i},window,winDisp*fs,freq_arr,fs);
     testsub3f5_15{i} = mean(abs(s(6:16,:)),1);
     testsub3f20_25{i} = mean(abs(s(21:26,:)),1);
-    testsub3f75_115{i} = mean(abs(s(76:116,:)),1)
+    testsub3f75_115{i} = mean(abs(s(76:116,:)),1);
     testsub3f125_160{i} = mean(abs(s(126:161,:)),1);
     testsub3f160_175{i} = mean(abs(s(161:176,:)),1);
 end
