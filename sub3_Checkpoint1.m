@@ -154,6 +154,8 @@ sub3_testpredict = testsub3X*sub3_weight;
 % which will be 50th sample to the 2947*50th sample
 sub3Spline = spline(50.*(1:length(sub3_testpredict)),sub3_testpredict',(50:50*length(sub3_testpredict)));
 % remember to un-transpose sub3_testpredict at the end
-sub3Pad = padarray(sub3Spline, [0 99]);
-sub3Pad(:,end+1) = 0;
+% sub3Pad = padarray(sub3Spline, [0 99]);
+% sub3Pad(:,end+1) = 0;
+sub3Pad = [zeros(5,150) sub3Spline zeros(5,49)];
 sub3Final = sub3Pad';
+save sub3Final sub3Final

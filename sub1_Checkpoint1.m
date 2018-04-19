@@ -155,6 +155,7 @@ sub1_testpredict = testsub1X*sub1_weight;
 % which will be 50th sample to the 2947*50th sample
 sub1Spline = spline(50.*(1:length(sub1_testpredict)),sub1_testpredict',(50:50*length(sub1_testpredict)));
 % remember to un-transpose sub1_testpredict at the end
-sub1Pad = padarray(sub1Spline, [0 99]);
-sub1Pad(:,end+1) = 0;
+% sub1Pad = padarray(sub1Spline, [0 150]);
+% sub1Pad(:,end+1) = 0;
+sub1Pad = [zeros(5,150) sub1Spline zeros(5,49)];
 sub1Final = sub1Pad';

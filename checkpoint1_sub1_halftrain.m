@@ -1,12 +1,4 @@
 
-%% Feature Extraction Code (taken from HW3)
-% gets the number of windows given the length and displacement
-% winLen and winDisp are in time(s), fs is sampling freq, xLen is length in
-% samples
-xLen = 300000;
-fs = 1000;
-winLen = 100 * 1e-3;
-winDisp = 50 * 1e-3;
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
 %% Feature Extraction (Average Time-Domain Voltage)
@@ -30,7 +22,7 @@ window = winLen*fs;
 freq_arr = 0:1:1000; %change to 0 to 1000 & change indices below
 %subject 1
 for i = 1:62
-    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,freq_arr,fs);
+    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,1000,fs);
     sub1f5_15{i} = mean(abs(s(6:16,:)),1);
     sub1f20_25{i} = mean(abs(s(21:26,:)),1);
     sub1f75_115{i} = mean(abs(s(76:116,:)),1);
@@ -66,6 +58,7 @@ for j = 1:62
         % error with sub1f20_25 input
     	sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
             sub1f75_115{j}(i-N+1:i) sub1f125_160{j}(i-N+1:i) sub1f160_175{j}(i-N+1:i)]; %insert data into R
+    
     end
 end
 
@@ -88,14 +81,16 @@ sub1_trainpredict = sub1X_train*sub1_weight;
 
 
 sub1_testpredict = sub1X_test*sub1_weight;
+testcorr = diag(corr(sub1_testpredict, sub1fingerflexion_test))
+
 
 % %% spline stuff
 % % will zero pad at the end
 % % [1:lastSample].*50 to reconstruct as much as we can then pad to 150k pt
 % % sub1_predict is our prediction on our testing data
 % % which will be 50th sample to the 2947*50th sample
-% sub1Spline = spline(50.*(1:length(sub1_testpredict)),sub1_testpredict',(50:50*length(sub1_testpredict)));
+%sub1Spline = spline(50.*(1:length(sub1_testpredict)),sub1_testpredict',(50:50*length(sub1_testpredict)));
 % % remember to un-transpose sub1_testpredict at the end
-% sub1Pad = padarray(sub1Spline, [0 99]);
-% sub1Pad(:,end+1) = 0;
-% sub1Final = sub1Pad';
+%sub1Pad = padarray(sub1Spline, [0 99]);
+%sub1Pad(:,end+1) = 0;
+%sub1Final = sub1Pad';
