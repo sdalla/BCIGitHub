@@ -30,10 +30,7 @@ sub1tdv = cell(1,62);
 for i = 1:62
    sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
 end
-<<<<<<< HEAD
-=======
 
->>>>>>> dde13668c15f03978aa2b6a1e397db515f4ec2de
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
@@ -71,9 +68,8 @@ N = 3; % 3 time windows
 f = 6; % 6 features
 sub1X = ones(5999,v*N*f+1);
 
-<<<<<<< HEAD
 for j = 1:62
-=======
+
 % for m = 1:5999
 %     disp(m);
 %     X(m,:) = [1 reshape(sub1tdv{:}(m:(m+N-1)),1,62*N)];
@@ -81,7 +77,6 @@ for j = 1:62
 ind = 1;
 for j = (62)
     
->>>>>>> dde13668c15f03978aa2b6a1e397db515f4ec2de
     %disp(j);
     for i = N:5999
         % error with sub1f20_25 input
