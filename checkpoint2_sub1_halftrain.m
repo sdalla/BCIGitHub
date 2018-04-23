@@ -1,30 +1,4 @@
-% %% determine correlation between each channel and each finger
-% corrmatrix = NaN(5,62);
-% for i = 1:5
-%     for j = 1:62
-%         corrmatrix(i,j) = corr(Sub1_Training_ecog{j},Sub1_Training_dg{i});
-%     end
-% end
-% %%
-% imagesc(1:62,1:5,corrmatrix)
-% colorbar
-% xlabel('Channel')
-% ylabel('Finger')
-% title('Correlation Between Each Channel and Finger')
 
-%% correlation of each channel with every other channel
-corrmatrix = NaN(62,62);
-for i = 1:62
-    for j = 1:62
-        corrmatrix(i,j) = corr(Sub1_Training_ecog{i},Sub1_Training_ecog{j});
-    end
-end
-
-imagesc(1:62,1:62,corrmatrix)
-colorbar
-xlabel('Channel')
-ylabel('Channel')
-%%
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
 %% Feature Extraction (Average Time-Domain Voltage)
@@ -39,9 +13,11 @@ winDisp = .05;
 %subject 1
 sub1tdv = cell(1,62);
 for i = 1:62
+    if i == 55
+        continue
+    end
    sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
 end
-
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
@@ -49,6 +25,9 @@ window = winLen*fs;
 freq_arr = 0:1:1000; %change to 0 to 1000 & change indices below
 %subject 1
 for i = 1:62
+    if i == 55
+        continue
+    end
     [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,1000,fs);
     sub1f5_15{i} = mean(abs(s(6:16,:)),1);
     sub1f20_25{i} = mean(abs(s(21:26,:)),1);
@@ -57,12 +36,8 @@ for i = 1:62
     sub1f160_175{i} = mean(abs(s(161:176,:)),1);
 end
 
-%% Remove noise from other fingers
-load('Sub1_Training_dg.mat');
-for i = 1:5
-    Sub1_Training_dg{i}(Sub1_Training_dg{i}<1) = 0;
-end
 %% Decimation of dataglove
+load('Sub1_Training_dg.mat');
 % decimated glove data for subject one
 % take out the last value to match our 5999
 sub1DataGlove = cell(1,5);
@@ -77,14 +52,19 @@ end
 v = 62; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
-sub1X = ones(5999,v*N*f+1);
+sub1X = ones(5999,61*N*f+1);
 ind = 1;
 for j = 1:62
-
+    %disp(j);
+    if j == 55
+        continue
+    end
     for i = N:5999
+       
         % error with sub1f20_25 input
     	sub1X(i,((ind-1)*N*f+2):(ind*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
             sub1f75_115{j}(i-N+1:i) sub1f125_160{j}(i-N+1:i) sub1f160_175{j}(i-N+1:i)]; %insert data into R
+    
     end
     ind = ind +1;
 end
@@ -100,46 +80,16 @@ sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1Data
 sub1fingerflexion_train = sub1fingerflexion(N:3000+N-1,:);
 sub1fingerflexion_test = sub1fingerflexion(3000+N:end,:);
 
+
 arg1 = (sub1X_train'*sub1X_train);
 arg2 = (sub1X_train'*sub1fingerflexion_train);
 sub1_weight = mldivide(arg1,arg2);
 sub1_trainpredict = sub1X_train*sub1_weight;
 
-% visually showing the weights
-subplot(5,1,1);
-imagesc(reshape(sub1_weight(1:1110,1),111,10));
-colorbar;
-title('Weights');
-ylabel('Channel Number');
-xlabel('Time bins');
-subplot(5,1,2);
-imagesc(reshape(sub1_weight(1:1110,2),111,10));
-colorbar;
-title('Weights');
-ylabel('Channel Number'); 
-xlabel('Time bins'); 
-subplot(5,1,3);
-imagesc(reshape(sub1_weight(1:1110,3),111,10));
-colorbar; 
-title('Weights'); 
-ylabel('Channel Number');
-xlabel('Time bins');
-subplot(5,1,4);
-imagesc(reshape(sub1_weight(1:1110,4),111,10));
-colorbar;
-title('Weights');
-ylabel('Channel Number'); 
-xlabel('Time bins'); 
-subplot(5,1,5);
-imagesc(reshape(sub1_weight(1:1110,5),111,10));
-colorbar; 
-title('Weights'); 
-ylabel('Channel Number'); 
-xlabel('Time bins');
 
 sub1_testpredict = sub1X_test*sub1_weight;
-testcorr = diag(corr(sub1_testpredict, sub1fingerflexion_test));
-mean(testcorr)
+testcorr = diag(corr(sub1_testpredict, sub1fingerflexion_test))
+
 
 % %% spline stuff
 % % will zero pad at the end
