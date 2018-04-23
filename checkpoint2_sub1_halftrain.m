@@ -30,20 +30,7 @@ sub1tdv = cell(1,62);
 for i = 1:62
    sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
 end
-%% plot avg tdv for all channels
-for i = 1:62
-plot(i,abs(mean(sub1tdv{i})),'o')
-hold on
-end
-%after plotting, there seem to be 2 clusters, separating at y = 3
-%% eliminate channels with abs(tdv) < 3
-% channel_hightdv =[];
-% for i = 1:62
-%     if abs(mean(sub1tdv{i})) < 1.5
-%         channel_hightdv(end+1) = i;
-%     end
-% end
-channel_hightdv = sub1tdv;
+
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
@@ -63,7 +50,7 @@ end
 %% Remove noise from other fingers
 load('Sub1_Training_dg.mat');
 for i = 1:5
-    Sub1_Training_dg(Sub1_Training_dg{i}<1) = 0;
+    Sub1_Training_dg{i}(Sub1_Training_dg{i}<1) = 0;
 end
 %% Decimation of dataglove
 % decimated glove data for subject one
@@ -77,7 +64,7 @@ end
 %% Formation of the X matrix
 % Referenced form HW7
 % 62 channels ~ 40 neurons (HW7)
-v = length(channel_hightdv); % 62 channels
+v = 62; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
 sub1X = ones(5999,v*N*f+1);
@@ -87,7 +74,7 @@ sub1X = ones(5999,v*N*f+1);
 %     X(m,:) = [1 reshape(sub1tdv{:}(m:(m+N-1)),1,62*N)];
 % end
 ind = 1;
-for j = (channel_hightdv)
+for j = (62)
     
     %disp(j);
     for i = N:5999
