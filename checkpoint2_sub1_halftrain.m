@@ -1,18 +1,29 @@
-%% determine correlation between each channel and each finger
-corrmatrix = NaN(5,62);
-for i = 1:5
+% %% determine correlation between each channel and each finger
+% corrmatrix = NaN(5,62);
+% for i = 1:5
+%     for j = 1:62
+%         corrmatrix(i,j) = corr(Sub1_Training_ecog{j},Sub1_Training_dg{i});
+%     end
+% end
+% %%
+% imagesc(1:62,1:5,corrmatrix)
+% colorbar
+% xlabel('Channel')
+% ylabel('Finger')
+% title('Correlation Between Each Channel and Finger')
+
+%% correlation of each channel with every other channel
+corrmatrix = NaN(62,62);
+for i = 1:62
     for j = 1:62
-        corrmatrix(i,j) = corr(Sub1_Training_ecog{j},Sub1_Training_dg{i});
+        corrmatrix(i,j) = corr(Sub1_Training_ecog{i},Sub1_Training_ecog{j});
     end
 end
-%%
-imagesc(1:62,1:5,corrmatrix)
+
+imagesc(1:62,1:62,corrmatrix)
 colorbar
 xlabel('Channel')
-ylabel('Finger')
-title('Correlation Between Each Channel and Finger')
-
-
+ylabel('Channel')
 %%
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
@@ -67,22 +78,15 @@ v = 62; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
 sub1X = ones(5999,v*N*f+1);
-
+ind = 1;
 for j = 1:62
 
-% for m = 1:5999
-%     disp(m);
-%     X(m,:) = [1 reshape(sub1tdv{:}(m:(m+N-1)),1,62*N)];
-% end
-ind = 1;
-for j = (62)
-    
-    %disp(j);
     for i = N:5999
         % error with sub1f20_25 input
-    	sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
+    	sub1X(i,((ind-1)*N*f+2):(ind*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
             sub1f75_115{j}(i-N+1:i) sub1f125_160{j}(i-N+1:i) sub1f160_175{j}(i-N+1:i)]; %insert data into R
     end
+    ind = ind +1;
 end
 
 sub1X(1:2,:) = [];
