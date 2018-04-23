@@ -1,0 +1,9 @@
+PREPROCESSING
+- 
+
+PROCESSING
+- High TDV, didn't increase corr, deleted (4/20)
+- Feature extraction, amplitude modulation (4/23)
+
+POSTPROCESSING
+- 

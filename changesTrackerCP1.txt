@@ -1,0 +1,10 @@
+PREPROCESSING
+- 
+
+PROCESSING
+- 6 Feature bands extraction (4/15)
+- Mean tdv
+(corr = 0.3962)
+
+POSTPROCESSING
+- 

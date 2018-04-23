@@ -15,34 +15,19 @@ sub1tdv = cell(1,62);
 for i = 1:62
    sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
 end
-%% plot avg tdv for all channels
-for i = 1:62
-plot(i,abs(mean(sub1tdv{i})),'o')
-hold on
-end
-%after plotting, there seem to be 2 clusters, separating at y = 3
-%% eliminate channels with abs(tdv) < 3
-channel_hightdv =[];
-for i = 1:62
-    if abs(mean(sub1tdv{i})) < 1.5
-        channel_hightdv(end+1) = i;
-    end
-end
-
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
 window = winLen*fs;
 freq_arr = 0:1:1000; %change to 0 to 1000 & change indices below
 %subject 1
-for i = 62
+for i = 1:62
     [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,1000,fs);
-    plot(s)
-    sub1f5_15{i} = mean(abs(s(6:16,:)),1)-mean(mean(abs(s(6:16,:)),1));
-    sub1f20_25{i} = mean(abs(s(21:26,:)),1)-mean(mean(abs(s(21:26,:)),1));
-    sub1f75_115{i} = mean(abs(s(76:116,:)),1)-mean(mean(abs(s(76:116,:)),1));
-    sub1f125_160{i} = mean(abs(s(126:161,:)),1)-mean(mean(abs(s(126:161,:)),1));
-    sub1f160_175{i} = mean(abs(s(161:176,:)),1)-mean(mean(abs(s(161:176,:)),1));
+    sub1f5_15{i} = mean(abs(s(6:16,:)),1);
+    sub1f20_25{i} = mean(abs(s(21:26,:)),1);
+    sub1f75_115{i} = mean(abs(s(76:116,:)),1);
+    sub1f125_160{i} = mean(abs(s(126:161,:)),1);
+    sub1f160_175{i} = mean(abs(s(161:176,:)),1);
 end
 
 %% Decimation of dataglove
@@ -58,26 +43,18 @@ end
 %% Formation of the X matrix
 % Referenced form HW7
 % 62 channels ~ 40 neurons (HW7)
-v = length(channel_hightdv); % 62 channels
+v = 62; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
 sub1X = ones(5999,v*N*f+1);
 
-% for m = 1:5999
-%     disp(m);
-%     X(m,:) = [1 reshape(sub1tdv{:}(m:(m+N-1)),1,62*N)];
-% end
-ind = 1;
-for j = (channel_hightdv)
-    
+for j = 1:62
     %disp(j);
     for i = N:5999
         % error with sub1f20_25 input
-    	sub1X(i,((ind-1)*N*f+2):(ind*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
+    	sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1tdv{j}(i-N+1:i) sub1f5_15{j}(i-N+1:i) sub1f20_25{j}(i-N+1:i) ...
             sub1f75_115{j}(i-N+1:i) sub1f125_160{j}(i-N+1:i) sub1f160_175{j}(i-N+1:i)]; %insert data into R
-    
     end
-    ind = ind+1;
 end
 
 sub1X(1:2,:) = [];
@@ -91,12 +68,42 @@ sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1Data
 sub1fingerflexion_train = sub1fingerflexion(N:3000+N-1,:);
 sub1fingerflexion_test = sub1fingerflexion(3000+N:end,:);
 
-
 arg1 = (sub1X_train'*sub1X_train);
 arg2 = (sub1X_train'*sub1fingerflexion_train);
 sub1_weight = mldivide(arg1,arg2);
 sub1_trainpredict = sub1X_train*sub1_weight;
 
+% visually showing the weights
+subplot(5,1,1);
+imagesc(reshape(sub1_weight(1:1110,1),111,10));
+colorbar;
+title('Weights');
+ylabel('Channel Number');
+xlabel('Time bins');
+subplot(5,1,2);
+imagesc(reshape(sub1_weight(1:1110,2),111,10));
+colorbar;
+title('Weights');
+ylabel('Channel Number'); 
+xlabel('Time bins'); 
+subplot(5,1,3);
+imagesc(reshape(sub1_weight(1:1110,3),111,10));
+colorbar; 
+title('Weights'); 
+ylabel('Channel Number');
+xlabel('Time bins');
+subplot(5,1,4);
+imagesc(reshape(sub1_weight(1:1110,4),111,10));
+colorbar;
+title('Weights');
+ylabel('Channel Number'); 
+xlabel('Time bins'); 
+subplot(5,1,5);
+imagesc(reshape(sub1_weight(1:1110,5),111,10));
+colorbar; 
+title('Weights'); 
+ylabel('Channel Number'); 
+xlabel('Time bins');
 
 sub1_testpredict = sub1X_test*sub1_weight;
 testcorr = diag(corr(sub1_testpredict, sub1fingerflexion_test));
