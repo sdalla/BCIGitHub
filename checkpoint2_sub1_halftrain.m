@@ -1,4 +1,19 @@
+%% determine correlation between each channel and each finger
+corrmatrix = NaN(5,62);
+for i = 1:5
+    for j = 1:62
+        corrmatrix(i,j) = corr(Sub1_Training_ecog{j},Sub1_Training_dg{i});
+    end
+end
+%%
+imagesc(1:62,1:5,corrmatrix)
+colorbar
+xlabel('Channel')
+ylabel('Finger')
+title('Correlation Between Each Channel and Finger')
 
+
+%%
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
 %% Feature Extraction (Average Time-Domain Voltage)
@@ -22,13 +37,13 @@ hold on
 end
 %after plotting, there seem to be 2 clusters, separating at y = 3
 %% eliminate channels with abs(tdv) < 3
-channel_hightdv =[];
-for i = 1:62
-    if abs(mean(sub1tdv{i})) < 1.5
-        channel_hightdv(end+1) = i;
-    end
-end
-
+% channel_hightdv =[];
+% for i = 1:62
+%     if abs(mean(sub1tdv{i})) < 1.5
+%         channel_hightdv(end+1) = i;
+%     end
+% end
+channel_hightdv = sub1tdv;
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
 % Total number of features in given time window is (num channels)*(5+1)
@@ -45,8 +60,12 @@ for i = 62
     sub1f160_175{i} = mean(abs(s(161:176,:)),1)-mean(mean(abs(s(161:176,:)),1));
 end
 
-%% Decimation of dataglove
+%% Remove noise from other fingers
 load('Sub1_Training_dg.mat');
+for i = 1:5
+    Sub1_Training_dg(Sub1_Training_dg{i}<1) = 0;
+end
+%% Decimation of dataglove
 % decimated glove data for subject one
 % take out the last value to match our 5999
 sub1DataGlove = cell(1,5);
