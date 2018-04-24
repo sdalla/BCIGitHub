@@ -37,8 +37,8 @@ zscores = zscore(logRMSV);
 scatter(1:61,zscores);
 
 % Calculate p-values using a Gaussian distribution fitted to the data
-p_one = 2*normcdf(zscores);
-p_two = normcdf(zscores);
+[h,p] = ttest(logRMSV);
+channelsExcl = find(logRMSV > (mean(logRMSV)+2*std(logRMSV)));
 
 % Exclude channel if mean amplitude is significantly different from the mean amplitude of all other channels (p < 0.05). 
 %% Numwins
@@ -140,8 +140,8 @@ testcorr = mean(diag(corr(sub1_testpredict, sub1fingerflexion_test)))
 %% Prediction Using Lasso
 arg1 = sub1X_train;
 [B1, FitInfo] = lasso(arg1,sub1fingerflexion_train(:,1));
-lassTestPredx = sub1X_test*B + repmat(FitInfo.Intercept,size((sub1X_test*B),1),1);
-lassocorr = diag(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
+lassTestPredx = sub1X_test*B1 + repmat(FitInfo.Intercept,size((sub1X_test*B1),1),1);
+lassocorr = mean(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
 
 % %% spline stuff
 % % will zero pad at the end
