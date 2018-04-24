@@ -16,13 +16,16 @@ load('sub1_Training_dg.mat');
 % decimated dataglove
 load('sub1DataGlove.mat');
 
-
+i = [55 21 44 52 18 27 40 49]; %remove channels
+for j = 1:length(i)
+Sub1_Training_ecog(i(j))=[];
+end
 %% break into freq bands using spectrogram, could do next section instead
-
+v = 54;
 window = winLen*fs;
 freq_arr = 0:1:500; 
 %subject 1
-for i = 1:62
+for i = 1:v
     [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,freq_arr,fs);
     sub1f1_60{i} = abs(s(1:60,:));
     sub1f60_100{i} = abs(s(60:100,:));
@@ -42,7 +45,7 @@ Filter2 = temp.Filter2;
 temp = load('Filter3.mat');
 Filter3 = temp.Filter3;
 
-for i = 1:62   
+for i = 1:v   
     sub1_1_60filt{i} = filtfilt(Filter1,1.0,Sub1_Training_ecog{1,i});
     sub1_60_100filt{i} = filtfilt(Filter2,1.0,Sub1_Training_ecog{1,i});
     sub1_100_200filt{i} = filtfilt(Filter3,1.0,Sub1_Training_ecog{1,i});
@@ -60,7 +63,7 @@ plot(sub1_100_200filt{1}(1:10000))
 
 %% Amplitude modulation
 ampFxn = @(x) sum(x.^2);
-for i = 1:62
+for i = 1:v
     sub1_1_60amp{i} = MovingWinFeats(sub1_1_60filt{i}, fs, winLen, winDisp, ampFxn);
     sub1_60_100amp{i} = MovingWinFeats(sub1_60_100filt{i}, fs, winLen, winDisp, ampFxn);
     sub1_100_200amp{i} = MovingWinFeats(sub1_100_200filt{i}, fs, winLen, winDisp, ampFxn);
@@ -68,7 +71,7 @@ end
 
 %% Constructing a new X (R) matrix
 
-v = 62; % 62 channels
+v = 54; % 62 channels
 N = 4; % time windows 
 f = 3; % 6 features
 sub1X = ones(5999,v*N*f+1);
@@ -109,7 +112,10 @@ arg2 = (sub1X_train'*sub1fingerflexion_train);
 sub1_weight = mldivide(arg1,arg2);
 sub1_trainpredict = sub1X_train*sub1_weight;
 
-
-sub1_testpredict = sub1X_test*sub1_weight;
-traingcorr = diag(corr(sub1_trainpredict, sub1fingerflexion_train))
-testcorr = diag(corr(sub1_testpredict, sub1fingerflexion_test))
+[B1, FitInfo] = lasso(sub1X_train,sub1fingerflexion_train(:,1));
+lassTestPredx = sub1X_test*B1 + repmat(FitInfo.Intercept,size((sub1X_test*B1),1),1);
+lassocorr = mean(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
+%%
+%sub1_testpredict = sub1X_test*sub1_weight;
+%traingcorr = diag(corr(sub1_trainpredict, sub1fingerflexion_train))
+%testcorr = diag(corr(sub1_testpredict, sub1fingerflexion_test))

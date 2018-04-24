@@ -127,12 +127,10 @@ sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1Data
 sub1fingerflexion_train = sub1fingerflexion(N:3000+N-1,:);
 sub1fingerflexion_test = sub1fingerflexion(3000+N:end,:);
 
-
 arg1 = (sub1X_train'*sub1X_train);
 arg2 = (sub1X_train'*sub1fingerflexion_train);
 sub1_weight = mldivide(arg1,arg2);
 sub1_trainpredict = sub1X_train*sub1_weight;
-
 
 sub1_testpredict = sub1X_test*sub1_weight;
 testcorr = mean(diag(corr(sub1_testpredict, sub1fingerflexion_test)))
@@ -140,6 +138,9 @@ testcorr = mean(diag(corr(sub1_testpredict, sub1fingerflexion_test)))
 %% Prediction Using Lasso
 arg1 = sub1X_train;
 [B1, FitInfo] = lasso(arg1,sub1fingerflexion_train(:,1));
+
+[B1, FitInfo] = lasso(sub1X_train,sub1fingerflexion_train(:,1));
+
 lassTestPredx = sub1X_test*B1 + repmat(FitInfo.Intercept,size((sub1X_test*B1),1),1);
 lassocorr = mean(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
 
