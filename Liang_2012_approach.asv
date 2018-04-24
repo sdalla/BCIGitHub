@@ -31,12 +31,11 @@ for i = 1:62
 end
 
 %% break into freq bands using FIR filters and filterDesigner
-temp = load('Filter1.mat');
-Filter1 = temp.Filter1;
+Filter1 = load('Filter1.mat');
 temp = load('Filter2.mat');
 Filter2 = temp.Filter2;
 temp = load('Filter3.mat');
-Filter3 = temp.Filter3;
+Filter3 = temp.F
 
 for i = 1:62   
     sub1_1_60filt{i} = filtfilt(Filter1,1.0,Sub1_Training_ecog{1,i});
