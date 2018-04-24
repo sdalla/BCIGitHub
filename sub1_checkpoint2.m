@@ -92,14 +92,36 @@ for j = 1:v
      
         sub1X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1_1_60amp{j}(i-N+1:i) sub1_60_100amp{j}(i-N+1:i) ...
             sub1_100_200amp{j}(i-N+1:i)]; %insert data into R
-        sub1XTest(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1_1_60Testamp{j}(i-N+1:i) sub1_60_100Testamp{j}(i-N+1:i) ...
-            sub1_100_200Testamp{j}(i-N+1:i)]; %insert data into R
     end
 end
 
 sub1X(1:N-1,:) = [];
 sub1XTest(1:N-1,:) = [];
 
+
+%% Test R
+v = 54; % 62 channels
+N = 4; % time windows 
+f = 3; % 6 features
+xLen = 147500;
+fs = 1000;
+winLen = 100 * 1e-3;
+winDisp = 50 * 1e-3;
+NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
+
+sub1XTest = ones(NumWins(xLen,fs,winLen,winDisp),v*N*f+1);
+
+for j = 1:62
+    %disp(j);
+    for i = N:NumWins(xLen,fs,winLen,winDisp)
+       
+    	        sub1XTest(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1_1_60Testamp{j}(i-N+1:i) sub1_60_100Testamp{j}(i-N+1:i) ...
+            sub1_100_200Testamp{j}(i-N+1:i)]; %insert data into R
+
+    end
+end
+
+sub1XTest(1:2,:) = [];
 %% Calculation 
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
 
@@ -107,11 +129,11 @@ sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1Data
 [B1, FitInfo] = lasso(sub1X,sub1fingerflexion(:,1));
 lassTestPred1 = sub1XTest*B1 + repmat(FitInfo.Intercept,size((sub1XTest*B1),1),1);
 lassocorr = mean(corr(lassTestPred1, sub1fingerflexion_test(:,1)))
-
+disp('lasso 1 done')
 [B2, FitInfo] = lasso(sub1X,sub1fingerflexion(:,2));
 lassTestPred2 = sub1XTest*B2 + repmat(FitInfo.Intercept,size((sub1XTest*B2),1),1);
 lassocorr = mean(corr(lassTestPred2, sub1fingerflexion_test(:,2)))
-
+disp('lasso 2 done')
 [B3, FitInfo] = lasso(sub1X,sub1fingerflexion(:,3));
 lassTestPred3 = sub1XTest*B3 + repmat(FitInfo.Intercept,size((sub1XTest*B3),1),1);
 lassocorr = mean(corr(lassTestPred3, sub1fingerflexion_test(:,4)))
