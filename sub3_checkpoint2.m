@@ -158,5 +158,26 @@ sub3chp2 = [sub3Final1 sub3Final2 sub3Final3 zeros(147500,1) sub3Final5];
 
 %% post processing of the output (filtering???)
 
+%sampling freq
+Fs = 1000;
+%length of the sample
+l = length(sub3chp2(:,1));
+%freq array of sample
+f = Fs*(0:(l/2))/l;
+
+fft_sub1 = fft(sub3chp2(:,1));
+fft_mag = abs((fft_sub1));
+fft_mag_plot = fft_mag(1:l/2+1); 
+figure()
+plot(f,fft_mag_plot)
+figure()
+plot(sub3chp2(:,1))
+temp = load('postFilter.mat');
+postFilter = temp.postFilter;
+
+filteredOutput = filtfilt(postFilter,1.0,sub3chp2(:,1));
+figure()
+plot(filteredOutput)
+
 %% saving the data to a .mat file
 save sub3checkpoint2 sub3chp2
