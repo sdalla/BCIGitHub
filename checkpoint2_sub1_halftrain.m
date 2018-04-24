@@ -1,8 +1,18 @@
-
+load('Sub1_Training_ecog.mat');
+%% Identifying channels with abnormal amplitude distributions
+Fs = 1000;            % Sampling frequency                    
+T = 1/Fs;             % Sampling period       
+L = 1500;             % Length of signal
+t = (0:L-1)*T;        % Time vector
+Y = fft(Sub1_Trainng_ecog{1});
+P2 = abs(Y/L);
+P1 = P2(1:L/2+1);
+P1(2:end-1) = 2*P1(2:end-1);
+%% Numwins
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
 %% Feature Extraction (Average Time-Domain Voltage)
-load('Sub1_Training_ecog.mat');
+
 tdvFxn = @(x) mean(x);
 
 xLen = 300000;
@@ -56,7 +66,7 @@ sub1X = ones(5999,61*N*f+1);
 ind = 1;
 for j = 1:62
     %disp(j);
-    if j == 55
+    if j == 55 %remove outlier (channel 55)
         continue
     end
     for i = N:5999
