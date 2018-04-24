@@ -31,6 +31,8 @@ for i = 1:62
 end
 
 %% break into freq bands using FIR filters and filterDesigner
+% filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
+% stopsbands are 0.5Hz above/below 
 for i = 1:62   
     sub1_1_60filt{i} = filtfilt(Filter1,1,Sub1_Training_ecog{1,i});
     sub1_60_100filt{i} = filtfilt(Filter2,1,Sub1_Training_ecog{1,i});
