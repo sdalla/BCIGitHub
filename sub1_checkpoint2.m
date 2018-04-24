@@ -111,7 +111,7 @@ NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp
 
 sub1XTest = ones(NumWins(xLen,fs,winLen,winDisp),v*N*f+1);
 
-for j = 1:62
+for j = 1:v
     %disp(j);
     for i = N:NumWins(xLen,fs,winLen,winDisp)
        
@@ -121,27 +121,27 @@ for j = 1:62
     end
 end
 
-sub1XTest(1:2,:) = [];
+sub1XTest(1:N-1,:) = [];
 %% Calculation 
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
 
 
-[B1, FitInfo] = lasso(sub1X,sub1fingerflexion(:,1));
+[B1, FitInfo] = lasso(sub1X,sub1fingerflexion(N:end,1));
 lassTestPred1 = sub1XTest*B1 + repmat(FitInfo.Intercept,size((sub1XTest*B1),1),1);
-lassocorr = mean(corr(lassTestPred1, sub1fingerflexion_test(:,1)))
+lassocorr = mean(corr(lassTestPred1, sub1fingerflexion_test(N:end,1)))
 disp('lasso 1 done')
-[B2, FitInfo] = lasso(sub1X,sub1fingerflexion(:,2));
+[B2, FitInfo] = lasso(sub1X,sub1fingerflexion(N:end,2));
 lassTestPred2 = sub1XTest*B2 + repmat(FitInfo.Intercept,size((sub1XTest*B2),1),1);
-lassocorr = mean(corr(lassTestPred2, sub1fingerflexion_test(:,2)))
+lassocorr = mean(corr(lassTestPred2, sub1fingerflexion_test(N:end,2)))
 disp('lasso 2 done')
-[B3, FitInfo] = lasso(sub1X,sub1fingerflexion(:,3));
+[B3, FitInfo] = lasso(sub1X,sub1fingerflexion(N:end,3));
 lassTestPred3 = sub1XTest*B3 + repmat(FitInfo.Intercept,size((sub1XTest*B3),1),1);
-lassocorr = mean(corr(lassTestPred3, sub1fingerflexion_test(:,4)))
+lassocorr = mean(corr(lassTestPred3, sub1fingerflexion_test(N:end,4)))
 
 
-[B5, FitInfo] = lasso(sub1X,sub1fingerflexion(:,5));
+[B5, FitInfo] = lasso(sub1X,sub1fingerflexion(N:end,5));
 lassTestPred5 = sub1XTest*B5 + repmat(FitInfo.Intercept,size((sub1XTest*B5),1),1);
-lassocorr = mean(corr(lassTestPred5, sub1fingerflexion_test(:,5)))
+lassocorr = mean(corr(lassTestPred5, sub1fingerflexion_test(N:end,5)))
 
 lassTestPred1 = lassTestPred1(:,1);
 lassTestPred2 = lassTestPred2(:,1);
