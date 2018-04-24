@@ -41,11 +41,13 @@ winDisp = .05;
 
 %subject 1
 sub1tdv = cell(1,62);
+ind = 1;
 for i = 1:62
-    if i == 55
-        continue
-    end
+   % if (i == 55) || (i == 21) || (i == 44) || (i == 52)
+     %   continue
+   % end
    sub1tdv{i} = MovingWinFeats(Sub1_Training_ecog{1,i}, fs, winLen, winDisp, tdvFxn);
+   %ind = ind+1;
 end
 %% Feature Extraction (Average Frequency-Domain Magnitude in 5 bands)
 % Frequency bands are: 5-15Hz, 20-25Hz, 75-115Hz, 125-160Hz, 160-175Hz
@@ -53,16 +55,18 @@ end
 window = winLen*fs;
 freq_arr = 0:1:1000; %change to 0 to 1000 & change indices below
 %subject 1
+ind = 1;
 for i = 1:62
-    if i == 55
-        continue
-    end
+   % if (i == 55) || (i == 21) || (i == 44) || (i == 52)
+        %continue
+   % end
     [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,1000,fs);
     sub1f5_15{i} = mean(abs(s(6:16,:)),1);
     sub1f20_25{i} = mean(abs(s(21:26,:)),1);
     sub1f75_115{i} = mean(abs(s(76:116,:)),1);
     sub1f125_160{i} = mean(abs(s(126:161,:)),1);
     sub1f160_175{i} = mean(abs(s(161:176,:)),1);
+    
 end
 
 %% Decimation of dataglove
@@ -78,14 +82,14 @@ end
 %% Formation of the X matrix
 % Referenced form HW7
 % 62 channels ~ 40 neurons (HW7)
-v = 62; % 62 channels
+v = 62-4; % 62 channels
 N = 3; % 3 time windows 
 f = 6; % 6 features
-sub1X = ones(5999,61*N*f+1);
+sub1X = ones(5999,v*N*f+1);
 ind = 1;
-for j = 1:62
+for j = 1:v
     %disp(j);
-    if j == 55 %remove outlier (channel 55)
+    if (i == 55) || (i == 21) || (i == 44) || (i == 52) %remove outlier (channel 55)
         continue
     end
     for i = N:5999
