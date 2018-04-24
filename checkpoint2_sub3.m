@@ -47,3 +47,5 @@ scatter(1:length(zscores),zscores);
 [h,p] = ttest(logRMSV);
 channelsExcl = find(logRMSV > (mean(logRMSV)+2*std(logRMSV)));
 % this returns channels 23, 38, 58
+
+%%
