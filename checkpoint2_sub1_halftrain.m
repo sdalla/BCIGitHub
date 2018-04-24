@@ -124,8 +124,7 @@ sub1_testpredict = sub1X_test*sub1_weight;
 testcorr = mean(diag(corr(sub1_testpredict, sub1fingerflexion_test)))
 
 %% Prediction Using Lasso
-arg1 = sub1X_train;
-[B1, FitInfo] = lasso(arg1,sub1fingerflexion_train(:,1));
+[B1, FitInfo] = lasso(sub1X_train,sub1fingerflexion_train(:,1));
 lassTestPredx = sub1X_test*B + repmat(FitInfo.Intercept,size((sub1X_test*B),1),1);
 lassocorr = diag(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
 
