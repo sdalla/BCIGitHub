@@ -16,9 +16,13 @@ load('sub1_Training_dg.mat');
 % decimated dataglove
 load('sub1DataGlove.mat');
 
-i = [55 21 44 52 18 27 40 49]; %remove channels
-for j = 1:length(i)
-Sub1_Training_ecog(i(j))=[];
+ch_remove = [55 21 44 52 18 27 40 49]; %remove channels
+channel = 1:62;
+channel(ch_remove) = [];
+ind = 1;
+for j = channel
+    Sub1_Training_ecog_ch{ind} = Sub1_Training_ecog{j};
+    ind = ind + 1;
 end
 %% break into freq bands using spectrogram, could do next section instead
 v = 54;
@@ -26,7 +30,7 @@ window = winLen*fs;
 freq_arr = 0:1:500; 
 %subject 1
 for i = 1:v
-    [s,freq,t] = spectrogram(Sub1_Training_ecog{1,i},window,winDisp*fs,freq_arr,fs);
+    [s,freq,t] = spectrogram(Sub1_Training_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
     sub1f1_60{i} = abs(s(1:60,:));
     sub1f60_100{i} = abs(s(60:100,:));
     sub1f100_200{i} = abs(s(100:200,:));
@@ -46,14 +50,14 @@ temp = load('Filter3.mat');
 Filter3 = temp.Filter3;
 
 for i = 1:v   
-    sub1_1_60filt{i} = filtfilt(Filter1,1.0,Sub1_Training_ecog{1,i});
-    sub1_60_100filt{i} = filtfilt(Filter2,1.0,Sub1_Training_ecog{1,i});
-    sub1_100_200filt{i} = filtfilt(Filter3,1.0,Sub1_Training_ecog{1,i});
+    sub1_1_60filt{i} = filtfilt(Filter1,1.0,Sub1_Training_ecog_ch{1,i});
+    sub1_60_100filt{i} = filtfilt(Filter2,1.0,Sub1_Training_ecog_ch{1,i});
+    sub1_100_200filt{i} = filtfilt(Filter3,1.0,Sub1_Training_ecog_ch{1,i});
 end
 
 %% plot the filtered and original data (sanity check)
 subplot(4,1,1)
-plot(Sub1_Training_ecog{1,1}(1:10000))
+plot(Sub1_Training_ecog_ch{1,1}(1:10000))
 subplot(4,1,2)
 plot(sub1_1_60filt{1}(1:10000))
 subplot(4,1,3)
@@ -95,7 +99,7 @@ arg1 = (sub1X'*sub1X);
 arg2 = (sub1X'*sub1fingerflexion(N:end,:));
 sub1_weight = mldivide(arg1,arg2);
 sub1_trainpredict = sub1X*sub1_weight;
-corr(sub1_trainpredict,sub1fingerflexion(N:end,:))
+corr(sub1_trainpredict,sub1fingerflexion(N:end,:));
 
 %% split into test and train and do the same thing
 %% Split into test and train
