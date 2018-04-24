@@ -31,10 +31,10 @@ for i = 1:62
 end
 
 %% break into freq bands using FIR filters and filterDesigner
-<<<<<<< HEAD
+
 % filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
 % stopsbands are 0.5Hz above/below 
-=======
+
 temp = load('Filter1.mat');
 Filter1 = temp.Filter1;
 temp = load('Filter2.mat');
@@ -42,7 +42,6 @@ Filter2 = temp.Filter2;
 temp = load('Filter3.mat');
 Filter3 = temp.Filter3;
 
->>>>>>> origin/master
 for i = 1:62   
     sub1_1_60filt{i} = filtfilt(Filter1,1.0,Sub1_Training_ecog{1,i});
     sub1_60_100filt{i} = filtfilt(Filter2,1.0,Sub1_Training_ecog{1,i});
