@@ -164,3 +164,6 @@ sub1Final3 = sub1Pad3';
 sub1Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
 sub1Pad5 = [zeros(1,200) sub1Spline5 zeros(1,49)];
 sub1Final5 = sub1Pad5';
+
+sub1chp2 = [sub1Final1 sub1Final2 sub1Final3 zeros(147500,1) sub1Final5];
+save sub1checkpoint2 sub1chp2
