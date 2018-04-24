@@ -111,7 +111,7 @@ arg1 = sub1X_train;
 [B1, FitInfo] = lasso(sub1X_train,sub1fingerflexion_train(:,1));
 
 lassTestPredx = sub1X_test*B1 + repmat(FitInfo.Intercept,size((sub1X_test*B1),1),1);
-lassocorr = mean(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
+lassocorr = mean(corr(lassTestPredx(:,1), sub1fingerflexion_test(:,1)))
 
 % %% spline stuff
 % % will zero pad at the end

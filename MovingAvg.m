@@ -6,7 +6,7 @@ function filtSubData = MovingAvg(subData)
     coeffMAvg = ones(1, fs)/fs;
     fDelay = (length(coeffMAvg)-1)/2; %delay caused by using Moving Avg Filter
     %filtSubData = zeros(size(subData,1),size(subData,2));
-    subDataPad = vertcat(ones(500,5), subData);
+    subDataPad = vertcat(ones(500,1), subData);
     for i = 1 : size(subDataPad,2);
         %apply filter to each finger and save result
         filtSubData(:,i) = filter(coeffMAvg, 1, subDataPad(:,i));
