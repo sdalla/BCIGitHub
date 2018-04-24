@@ -155,4 +155,8 @@ sub3Pad5 = [zeros(1,200) sub3Spline5 zeros(1,49)];
 sub3Final5 = sub3Pad5';
 
 sub3chp2 = [sub3Final1 sub3Final2 sub3Final3 zeros(147500,1) sub3Final5];
+
+%% post processing of the output (filtering???)
+
+%% saving the data to a .mat file
 save sub3checkpoint2 sub3chp2
