@@ -139,8 +139,8 @@ testcorr = mean(diag(corr(sub1_testpredict, sub1fingerflexion_test)))
 
 %% Prediction Using Lasso
 [B1, FitInfo] = lasso(sub1X_train,sub1fingerflexion_train(:,1));
-lassTestPredx = sub1X_test*B + repmat(FitInfo.Intercept,size((sub1X_test*B),1),1);
-lassocorr = diag(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
+lassTestPredx = sub1X_test*B1 + repmat(FitInfo.Intercept,size((sub1X_test*B1),1),1);
+lassocorr = mean(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
 
 % %% spline stuff
 % % will zero pad at the end
