@@ -1,5 +1,7 @@
 PREPROCESSING
-- 
+- Manually remove outlier channels (55 for sub 1)
+- Remove channels with abnormal amplitude distributions
+- Remove channels with excessive line noise
 
 PROCESSING
 - High TDV, didn't increase corr, deleted (4/20)
