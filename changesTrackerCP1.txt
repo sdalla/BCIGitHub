@@ -8,3 +8,6 @@ PROCESSING
 
 POSTPROCESSING
 - 
+
+
+Sub1 half test half train mean correlation: .2707
