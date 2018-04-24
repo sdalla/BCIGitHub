@@ -1,46 +1,15 @@
 load('Sub1_Training_ecog.mat');
+v = 62;
+outliers = 55;
 %% Identifying channels with Excessive Line Noise
-%sampling freq
-Fs = 1000;
-%length of the sample
-l = length(Sub1_Training_ecog{1});
-%freq array of sample
-f = Fs*(0:(l/2))/l;
-ind = 1;
-for i = 1:62
-    if i == 55
-        continue
-    end
-fft_sub1 = fft(Sub1_Training_ecog{i});
-fft_mag = abs((fft_sub1));
-fft_mag_plot = fft_mag(1:l/2+1); 
-
-noise(ind) = mean(fft_mag(find(f==60)-75:find(f==60)+75));
-ind = ind + 1;
-end
-figure()
-plot(noise/median(noise),'o')
-
-%channel numbers that have line noises that have statistically significant
-%deviations
-abnormalAmpCh = find(noise/median(noise) > mean(noise/median(noise)) + 2*std(noise/median(noise)));
+% Pass in data cell array, any outliers manually found, and num channels
+elnChannels = ExcLineNoise(Sub1_Training_ecog,outliers,v);
 
 %% Identify channels with Abnormal Amplitude Distributions
-% Log-transform the RMS of the raw voltage values (RMSVs) for all channels 
-data = Sub1_Training_ecog;
-data(55) = [];
-RMSV = cellfun(@rms,data);
-logRMSV = log10(RMSV);
+% Pass in data cell array, any outliers manually found, and num channels
+aadChannels = AbnormAmpDist(Sub1_Training_ecog,outliers,v);
 
-% Normalize  by calculating z-scores
-zscores = zscore(logRMSV);
-scatter(1:61,zscores);
-
-% Calculate p-values using a Gaussian distribution fitted to the data
-[h,p] = ttest(logRMSV);
-channelsExcl = find(logRMSV > (mean(logRMSV)+2*std(logRMSV)));
-
-% Exclude channel if mean amplitude is significantly different from the mean amplitude of all other channels (p < 0.05). 
+exclChannels = [elnChannels aadChannels];
 %% Numwins
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
