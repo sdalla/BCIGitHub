@@ -26,7 +26,21 @@ plot(noise/median(noise),'o')
 abnormalAmpCh = find(noise/median(noise) > mean(noise/median(noise)) + 2*std(noise/median(noise)));
 
 %% Identify channels with Abnormal Amplitude Distributions
+% Log-transform the RMS of the raw voltage values (RMSVs) for all channels 
+data = Sub1_Training_ecog;
+data(55) = [];
+RMSV = cellfun(@rms,data);
+logRMSV = log10(RMSV);
 
+% Normalize  by calculating z-scores
+zscores = zscore(logRMSV);
+scatter(1:61,zscores);
+
+% Calculate p-values using a Gaussian distribution fitted to the data
+p_one = 2*normcdf(zscores);
+p_two = normcdf(zscores);
+
+% Exclude channel if mean amplitude is significantly different from the mean amplitude of all other channels (p < 0.05). 
 %% Numwins
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
