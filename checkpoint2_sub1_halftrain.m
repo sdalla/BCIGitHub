@@ -89,7 +89,7 @@ sub1X = ones(5999,v*N*f+1);
 ind = 1;
 for j = 1:v
     %disp(j);
-    if (i == 55) || (i == 21) || (i == 44) || (i == 52) %remove outlier (channel 55)
+    if (i == 55) || (i == 21) || (i == 44) || (i == 52) || (i == 18) || (i == 27) || (i == 40) || (i==49) %remove outlier (channel 55)
         continue
     end
     for i = N:5999
@@ -121,8 +121,13 @@ sub1_trainpredict = sub1X_train*sub1_weight;
 
 
 sub1_testpredict = sub1X_test*sub1_weight;
-testcorr = diag(corr(sub1_testpredict, sub1fingerflexion_test))
+testcorr = mean(diag(corr(sub1_testpredict, sub1fingerflexion_test)))
 
+%% Prediction Using Lasso
+arg1 = sub1X_train;
+[B1, FitInfo] = lasso(arg1,sub1fingerflexion_train(:,1));
+lassTestPredx = sub1X_test*B + repmat(FitInfo.Intercept,size((sub1X_test*B),1),1);
+lassocorr = diag(corr(lassTestPredx, sub1fingerflexion_test(:,1)))
 
 % %% spline stuff
 % % will zero pad at the end
