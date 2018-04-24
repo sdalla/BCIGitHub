@@ -3,35 +3,35 @@
 % specifications as: sub-bands (1-60 Hz), gamma band (60-100 Hz), and fast 
 % gamma band (100-200 Hz)
 % testing on sub1 only, for now
-%% load data
+% load data
 xLen = 300000;
 fs = 1000;
 winLen = 100 * 1e-3;
 winDisp = 50 * 1e-3;
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
-% ecog data
+%ecog data
 load('Sub1_training_ecog.mat');
-% original dataglove
+%original dataglove
 load('sub1_Training_dg.mat');
-% decimated dataglove
+%decimated dataglove
 load('sub1DataGlove.mat');
 %leaderboard ecog
 load('Sub1_Leaderboard_ecog.mat');
 
 ch_remove = [55 21 44 52 18 27 40 49]; %remove channels found in other mat file
-channel = 1:62;
-channel(ch_remove) = [];
+% channel = 1:62;
+% channel(ch_remove) = [];
 ind = 1;
 for j = channel
     Sub1_Training_ecog_ch{ind} = Sub1_Training_ecog{j};
     Sub1_Test_ecog_ch{ind} = Sub1_Leaderboard_ecog{j};
     ind = ind + 1;
 end
-%% break into freq bands using spectrogram, could do next section instead
+% break into freq bands using spectrogram, could do next section instead
 v = 54;
 window = winLen*fs;
 freq_arr = 0:1:500; 
-%subject 1
+subject 1
 for i = 1:v
     [s,freq,t] = spectrogram(Sub1_Training_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
     sub1f1_60{i} = abs(s(1:60,:));
@@ -44,10 +44,10 @@ for i = 1:v
     
 end
 
-%% break into freq bands using FIR filters and filterDesigner
+% break into freq bands using FIR filters and filterDesigner
 
-% filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
-% stopsbands are 0.5Hz above/below 
+filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
+stopsbands are 0.5Hz above/below 
 
 temp = load('Filter1.mat');
 Filter1 = temp.Filter1;
@@ -66,7 +66,7 @@ for i = 1:v
 end
 
 
-%% Amplitude modulation
+% Amplitude modulation
 ampFxn = @(x) sum(x.^2);
 for i = 1:v
     sub1_1_60amp{i} = MovingWinFeats(sub1_1_60filt{i}, fs, winLen, winDisp, ampFxn);
@@ -77,7 +77,7 @@ for i = 1:v
     sub1_100_200Testamp{i} = MovingWinFeats(sub1_100_200Testfilt{i}, fs, winLen, winDisp, ampFxn);
 end
 
-%% Constructing a new X (R) matrix
+% Constructing a new X (R) matrix
 
 v = 54; % 62 channels
 N = 4; % time windows 
@@ -99,7 +99,7 @@ sub1X(1:N-1,:) = [];
 sub1XTest(1:N-1,:) = [];
 
 
-%% Test R
+% Test R
 v = 54; % 62 channels
 N = 4; % time windows 
 f = 3; % 6 features
@@ -112,7 +112,7 @@ NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp
 sub1XTest = ones(NumWins(xLen,fs,winLen,winDisp),v*N*f+1);
 
 for j = 1:v
-    %disp(j);
+    disp(j);
     for i = N:NumWins(xLen,fs,winLen,winDisp)
        
     	        sub1XTest(i,((j-1)*N*f+2):(j*N*f)+1) = [sub1_1_60Testamp{j}(i-N+1:i) sub1_60_100Testamp{j}(i-N+1:i) ...
@@ -122,7 +122,7 @@ for j = 1:v
 end
 
 sub1XTest(1:N-1,:) = [];
-%% Calculation 
+% Calculation 
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
 
 
@@ -148,7 +148,7 @@ lassTestPred2 = lassTestPred2(:,1);
 lassTestPred3 = lassTestPred3(:,1);
 lassTestPred5 = lassTestPred5(:,1);
 
-%% spline
+% spline
 sub1Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
 sub1Pad1 = [zeros(1,200) sub1Spline1 zeros(1,49)];
 sub1Final1 = sub1Pad1';
