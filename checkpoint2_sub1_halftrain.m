@@ -1,13 +1,32 @@
 load('Sub1_Training_ecog.mat');
-%% Identifying channels with abnormal amplitude distributions
-Fs = 1000;            % Sampling frequency                    
-T = 1/Fs;             % Sampling period       
-L = 1500;             % Length of signal
-t = (0:L-1)*T;        % Time vector
-Y = fft(Sub1_Trainng_ecog{1});
-P2 = abs(Y/L);
-P1 = P2(1:L/2+1);
-P1(2:end-1) = 2*P1(2:end-1);
+%% Identifying channels with Excessive Line Noise
+%sampling freq
+Fs = 1000;
+%length of the sample
+l = length(Sub1_Training_ecog{1});
+%freq array of sample
+f = Fs*(0:(l/2))/l;
+ind = 1;
+for i = 1:62
+    if i == 55
+        continue
+    end
+fft_sub1 = fft(Sub1_Training_ecog{i});
+fft_mag = abs((fft_sub1));
+fft_mag_plot = fft_mag(1:l/2+1); 
+
+noise(ind) = mean(fft_mag(find(f==60)-75:find(f==60)+75));
+ind = ind + 1;
+end
+figure()
+plot(noise/median(noise),'o')
+
+%channel numbers that have line noises that have statistically significant
+%deviations
+abnormalAmpCh = find(noise/median(noise) > mean(noise/median(noise)) + 2*std(noise/median(noise)));
+
+%% Identify channels with Abnormal Amplitude Distributions
+
 %% Numwins
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
