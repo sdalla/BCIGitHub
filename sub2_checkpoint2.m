@@ -32,7 +32,8 @@ v = size(Sub2_Training_ecog_ch);
 v = v(1,2);
 window = winLen*fs;
 freq_arr = 0:1:500; 
-%subject 1
+
+%subject 2
 for i = 1:v
     [s,freq,t] = spectrogram(Sub2_Training_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
     sub2f1_60{i} = abs(s(1:60,:));
@@ -42,11 +43,9 @@ for i = 1:v
     sub2f1_60Test{i} = abs(s(1:60,:));
     sub2f60_100Test{i} = abs(s(60:100,:));
     sub2f100_200Test{i} = abs(s(100:200,:));
-    
 end
 
 %% break into freq bands using FIR filters and filterDesigner
-
 % filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
 % stopsbands are 0.5Hz above/below 
 
@@ -66,7 +65,6 @@ for i = 1:v
     sub2_100_200Testfilt{i} = filtfilt(Filter3,1.0,Sub2_Test_ecog_ch{1,i});
 end
 
-
 %% Amplitude modulation
 ampFxn = @(x) sum(x.^2);
 for i = 1:v
@@ -79,18 +77,14 @@ for i = 1:v
 end
 
 %% Constructing a new X (R) matrix
-
-v = 42; % 62 channels
+v = 42; % 48 channels
 N = 4; % time windows 
 f = 3; % 6 features
 sub2X = ones(5999,v*N*f+1);
 sub2XTest = ones(5999,v*N*f+1);
 
-
 for j = 1:v
-  
     for i = N:5999
-     
         sub2X(i,((j-1)*N*f+2):(j*N*f)+1) = [sub2_1_60amp{j}(i-N+1:i) sub2_60_100amp{j}(i-N+1:i) ...
             sub2_100_200amp{j}(i-N+1:i)]; %insert data into R
     end
@@ -99,9 +93,8 @@ end
 sub2X(1:N-1,:) = [];
 sub2XTest(1:N-1,:) = [];
 
-
 %% Test R
-v = 42; % 62 channels
+v = 42; % 48 channels
 N = 4; % time windows 
 f = 3; % 6 features
 xLen = 147500;
@@ -113,19 +106,15 @@ NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp
 sub2XTest = ones(NumWins(xLen,fs,winLen,winDisp),v*N*f+1);
 
 for j = 1:v
-    %disp(j);
     for i = N:NumWins(xLen,fs,winLen,winDisp)
-       
-    	        sub2XTest(i,((j-1)*N*f+2):(j*N*f)+1) = [sub2_1_60Testamp{j}(i-N+1:i) sub2_60_100Testamp{j}(i-N+1:i) ...
+        sub2XTest(i,((j-1)*N*f+2):(j*N*f)+1) = [sub2_1_60Testamp{j}(i-N+1:i) sub2_60_100Testamp{j}(i-N+1:i) ...
             sub2_100_200Testamp{j}(i-N+1:i)]; %insert data into R
-
     end
 end
 
 sub2XTest(1:N-1,:) = [];
 %% Calculation 
 sub2fingerflexion = [sub2DataGlove{1} sub2DataGlove{2} sub2DataGlove{3} sub2DataGlove{4} sub2DataGlove{5}];
-
 
 [B1, FitInfo] = lasso(sub2X,sub2fingerflexion(N:end,1));
 lassTestPred1 = sub2XTest*B1 + repmat(FitInfo.Intercept,size((sub2XTest*B1),1),1);
@@ -138,11 +127,8 @@ disp('lasso 2 done')
 [B3, FitInfo] = lasso(sub2X,sub2fingerflexion(N:end,3));
 lassTestPred3 = sub2XTest*B3 + repmat(FitInfo.Intercept,size((sub2XTest*B3),1),1);
 
-
-
 [B5, FitInfo] = lasso(sub2X,sub2fingerflexion(N:end,5));
 lassTestPred5 = sub2XTest*B5 + repmat(FitInfo.Intercept,size((sub2XTest*B5),1),1);
-
 
 lassTestPred1 = lassTestPred1(:,1);
 lassTestPred2 = lassTestPred2(:,1);
@@ -165,6 +151,6 @@ sub2Final3 = sub2Pad3';
 sub2Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
 sub2Pad5 = [zeros(1,200) sub2Spline5 zeros(1,49)];
 sub2Final5 = sub2Pad5';
-%%
+%% Saving
 sub2chp2 = [sub2Final1 sub2Final2 sub2Final3 zeros(147500,1) sub2Final5];
 save sub2checkpoint2 sub2chp2
