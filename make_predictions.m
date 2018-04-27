@@ -23,7 +23,27 @@ function [predicted_dg] = make_predictions(test_ecog)
 % for incercept output for each subject and finger - called intercept
 load TWTIFN.mat 
 
+%% Pre-processing ecog signal
+% Sub 1 Channel Elimination
+% Sub 2 Channel Elimination
+% Sub 3 Channel Elimination
+ch_remove = [23 38 58]; %remove channels found in other mat file
+channel = 1:64;
+channel(ch_remove) = [];
+ind = 1;
+for j = channel
+    Sub3_Test_ecog_ch{ind} = test_ecog{j};
+    ind = ind + 1;
+end
+v3 = size(Sub3_Training_ecog_ch,2);
 
+%% Feature extraction
+% Sub 1 feature extraction
+% Sub 2 feature extraction
+% Sub 3 feature extraction
+
+
+%% Linear prediction & post-processing
 % Predict using linear predictor for each subject
 %create cell array with one element for each subject
 predicted_dg = cell(3,1);
@@ -39,7 +59,7 @@ for subj = 1:3
     
     %for each finger
     for i = 1:5 
-        if i = 4
+        if i == 4
             yhat(:,i) = 0;
         end
         % predict dg based on ECOG for each finger
