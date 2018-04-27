@@ -32,12 +32,12 @@ for j = channel
     ind = ind + 1;
 end
 
-v = size(Sub3_Training_ecog_ch,2);
-
 %% break into freq bands using FIR filters and filterDesigner
+v = 64 - length(ch_remove);
+window = winLen*fs;
+freq_arr = 0:1:500; 
 % filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
 % stopsbands are 0.5Hz above/below 
-
 temp = load('Filter1.mat');
 Filter1 = temp.Filter1;
 temp = load('Filter2.mat');
@@ -66,7 +66,6 @@ for i = 1:v
 end
 
 %% Constructing a new X (R) matrix
-v = size(Sub3_Training_ecog_ch,2); % num channels after removal
 N = 4; % time windows 
 f = 3; % 6 features
 sub3X = ones(5999,v*N*f+1);
@@ -82,8 +81,6 @@ end
 sub3X(1:N-1,:) = [];
 
 %% Test R
-N = 4; % time windows 
-f = 3; % 6 features
 xLen = 147500;
 fs = 1000;
 winLen = 100 * 1e-3;
@@ -105,65 +102,66 @@ sub3XTest(1:N-1,:) = [];
 sub3fingerflexion = [sub3DataGlove{1} sub3DataGlove{2} sub3DataGlove{3} sub3DataGlove{4} sub3DataGlove{5}];
 
 [B1, FitInfo1] = lasso(sub3X,sub3fingerflexion(N:end,1));
-%lassTestPred1 = sub3XTest*B1 + repmat(FitInfo.Intercept,size((sub3XTest*B1),1),1);
+lassTestPred1 = sub3XTest*B1 + repmat(FitInfo1.Intercept,size((sub3XTest*B1),1),1);
 
 disp('lasso 1 done')
 [B2, FitInfo2] = lasso(sub3X,sub3fingerflexion(N:end,2));
-%lassTestPred2 = sub3XTest*B2 + repmat(FitInfo.Intercept,size((sub3XTest*B2),1),1);
+lassTestPred2 = sub3XTest*B2 + repmat(FitInfo2.Intercept,size((sub3XTest*B2),1),1);
 
 disp('lasso 2 done')
 [B3, FitInfo3] = lasso(sub3X,sub3fingerflexion(N:end,3));
-%lassTestPred3 = sub3XTest*B3 + repmat(FitInfo.Intercept,size((sub3XTest*B3),1),1);
+lassTestPred3 = sub3XTest*B3 + repmat(FitInfo3.Intercept,size((sub3XTest*B3),1),1);
 
+disp('lasso 3 done')
 [B5, FitInfo5] = lasso(sub3X,sub3fingerflexion(N:end,5));
-% lassTestPred5 = sub3XTest*B5 + repmat(FitInfo.Intercept,size((sub3XTest*B5),1),1);
-% 
-% lassTestPred1 = lassTestPred1(:,1);
-% lassTestPred2 = lassTestPred2(:,1);
-% lassTestPred3 = lassTestPred3(:,1);
-% lassTestPred5 = lassTestPred5(:,1);
-% 
-% %% spline
-% sub3Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
-% sub3Pad1 = [zeros(1,200) sub3Spline1 zeros(1,49)];
-% sub3Final1 = sub3Pad1';
-% 
-% sub3Spline2 = spline(50.*(1:length(lassTestPred2)),lassTestPred2',(50:50*length(lassTestPred2)));
-% sub3Pad2 = [zeros(1,200) sub3Spline2 zeros(1,49)];
-% sub3Final2 = sub3Pad2';
-% 
-% sub3Spline3 = spline(50.*(1:length(lassTestPred3)),lassTestPred3',(50:50*length(lassTestPred3)));
-% sub3Pad3 = [zeros(1,200) sub3Spline3 zeros(1,49)];
-% sub3Final3 = sub3Pad3';
-% 
-% sub3Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
-% sub3Pad5 = [zeros(1,200) sub3Spline5 zeros(1,49)];
-% sub3Final5 = sub3Pad5';
-% 
-% sub3chp2 = [sub3Final1 sub3Final2 sub3Final3 zeros(147500,1) sub3Final5];
-% save sub3checkpoint2 sub3chp2
-% %% post processing of the output (filtering???)
-% 
-% %sampling freq
-% Fs = 1000;
-% %length of the sample
-% l = length(sub3chp2(:,1));
-% %freq array of sample
-% f = Fs*(0:(l/2))/l;
-% 
-% fft_sub1 = fft(sub3chp2(:,1));
-% fft_mag = abs((fft_sub1));
-% fft_mag_plot = fft_mag(1:l/2+1); 
-% figure()
-% plot(f,fft_mag_plot)
-% figure()
-% plot(sub3chp2(:,1))
-% temp = load('postFilter.mat');
-% postFilter = temp.postFilter;
-% 
-% filteredOutput = filtfilt(postFilter,1.0,sub3chp2(:,1));
-% figure()
-% plot(filteredOutput)
-% 
-% %% saving the data to a .mat file
-% save sub3checkpoint2 sub3chp2
+lassTestPred5 = sub3XTest*B5 + repmat(FitInfo5.Intercept,size((sub3XTest*B5),1),1);
+
+lassTestPred1 = lassTestPred1(:,1);
+lassTestPred2 = lassTestPred2(:,1);
+lassTestPred3 = lassTestPred3(:,1);
+lassTestPred5 = lassTestPred5(:,1);
+
+%% spline
+sub3Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
+sub3Pad1 = [zeros(1,200) sub3Spline1 zeros(1,49)];
+sub3Final1 = sub3Pad1';
+
+sub3Spline2 = spline(50.*(1:length(lassTestPred2)),lassTestPred2',(50:50*length(lassTestPred2)));
+sub3Pad2 = [zeros(1,200) sub3Spline2 zeros(1,49)];
+sub3Final2 = sub3Pad2';
+
+sub3Spline3 = spline(50.*(1:length(lassTestPred3)),lassTestPred3',(50:50*length(lassTestPred3)));
+sub3Pad3 = [zeros(1,200) sub3Spline3 zeros(1,49)];
+sub3Final3 = sub3Pad3';
+
+sub3Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
+sub3Pad5 = [zeros(1,200) sub3Spline5 zeros(1,49)];
+sub3Final5 = sub3Pad5';
+
+sub3chp2 = [sub3Final1 sub3Final2 sub3Final3 zeros(147500,1) sub3Final5];
+save sub3checkpoint2 sub3chp2
+%% post processing of the output (filtering???)
+
+%sampling freq
+Fs = 1000;
+%length of the sample
+l = length(sub3chp2(:,1));
+%freq array of sample
+f = Fs*(0:(l/2))/l;
+
+fft_sub1 = fft(sub3chp2(:,1));
+fft_mag = abs((fft_sub1));
+fft_mag_plot = fft_mag(1:l/2+1); 
+figure()
+plot(f,fft_mag_plot)
+figure()
+plot(sub3chp2(:,1))
+temp = load('postFilter.mat');
+postFilter = temp.postFilter;
+
+filteredOutput = filtfilt(postFilter,1.0,sub3chp2(:,1));
+figure()
+plot(filteredOutput)
+
+%% saving the data to a .mat file
+save sub3checkpoint2 sub3chp2
