@@ -25,14 +25,34 @@ load TWTIFN.mat
 
 %% Pre-processing ecog signal
 % Sub 1 Channel Elimination
-% Sub 2 Channel Elimination
-% Sub 3 Channel Elimination
-ch_remove = [23 38 58]; %remove channels found in other mat file
-channel = 1:64;
-channel(ch_remove) = [];
+ch_remove1 = [55 21 44 52 18 27 40 49]; %remove channels found in other mat file
+channel1 = 1:62;
+channel1(ch_remove1) = [];
 ind = 1;
-for j = channel
-    Sub3_Test_ecog_ch{ind} = test_ecog{j};
+for j = channel1
+    Sub1_Test_ecog_ch{ind} = test_ecog{1}(:,j);
+    ind = ind + 1;
+end
+v1 = size(Sub1_Test_ecog_ch,2);
+
+% Sub 2 Channel Elimination
+ch_remove2 = [23 37 38];
+channel2 = 1:45;
+channel2(ch_remove2) = [];
+ind = 1;
+for j = channel2
+    Sub2_Test_ecog_ch{ind} = test_ecog{2}(:,j);
+    ind = ind + 1;
+end
+v2 = size(Sub2_Training_ecog_ch,2);
+
+% Sub 3 Channel Elimination
+ch_remove3 = [23 38 58];
+channel3 = 1:64;
+channel3(ch_remove3) = [];
+ind = 1;
+for j = channel3
+    Sub3_Test_ecog_ch{ind} = test_ecog{3}(:,j);
     ind = ind + 1;
 end
 v3 = size(Sub3_Training_ecog_ch,2);
