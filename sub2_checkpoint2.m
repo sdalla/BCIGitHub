@@ -14,7 +14,7 @@ load('Sub2_training_ecog.mat');
 % original dataglove
 load('sub2_Training_dg.mat');
 % decimated dataglove
-%load('Sub2DataGlove.mat');
+load('Sub2DataGlove.mat');
 %leaderboard ecog
 load('Sub2_Leaderboard_ecog.mat');
 
@@ -116,41 +116,41 @@ sub2XTest(1:N-1,:) = [];
 %% Calculation 
 sub2fingerflexion = [sub2DataGlove{1} sub2DataGlove{2} sub2DataGlove{3} sub2DataGlove{4} sub2DataGlove{5}];
 
-[B1, FitInfo] = lasso(sub2X,sub2fingerflexion(N:end,1));
-lassTestPred1 = sub2XTest*B1 + repmat(FitInfo.Intercept,size((sub2XTest*B1),1),1);
+[B1, FitInfo1] = lasso(sub2X,sub2fingerflexion(N:end,1));
+%lassTestPred1 = sub2XTest*B1 + repmat(FitInfo.Intercept,size((sub2XTest*B1),1),1);
 
 disp('lasso 1 done')
-[B2, FitInfo] = lasso(sub2X,sub2fingerflexion(N:end,2));
-lassTestPred2 = sub2XTest*B2 + repmat(FitInfo.Intercept,size((sub2XTest*B2),1),1);
+[B2, FitInfo2] = lasso(sub2X,sub2fingerflexion(N:end,2));
+%lassTestPred2 = sub2XTest*B2 + repmat(FitInfo.Intercept,size((sub2XTest*B2),1),1);
 
 disp('lasso 2 done')
-[B3, FitInfo] = lasso(sub2X,sub2fingerflexion(N:end,3));
-lassTestPred3 = sub2XTest*B3 + repmat(FitInfo.Intercept,size((sub2XTest*B3),1),1);
+[B3, FitInfo3] = lasso(sub2X,sub2fingerflexion(N:end,3));
+%lassTestPred3 = sub2XTest*B3 + repmat(FitInfo.Intercept,size((sub2XTest*B3),1),1);
 
-[B5, FitInfo] = lasso(sub2X,sub2fingerflexion(N:end,5));
-lassTestPred5 = sub2XTest*B5 + repmat(FitInfo.Intercept,size((sub2XTest*B5),1),1);
+[B5, FitInfo5] = lasso(sub2X,sub2fingerflexion(N:end,5));
+%lassTestPred5 = sub2XTest*B5 + repmat(FitInfo.Intercept,size((sub2XTest*B5),1),1);
 
-lassTestPred1 = lassTestPred1(:,1);
-lassTestPred2 = lassTestPred2(:,1);
-lassTestPred3 = lassTestPred3(:,1);
-lassTestPred5 = lassTestPred5(:,1);
-
-%% spline
-sub2Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
-sub2Pad1 = [zeros(1,200) sub2Spline1 zeros(1,49)];
-sub2Final1 = sub2Pad1';
-
-sub2Spline2 = spline(50.*(1:length(lassTestPred2)),lassTestPred2',(50:50*length(lassTestPred2)));
-sub2Pad2 = [zeros(1,200) sub2Spline2 zeros(1,49)];
-sub2Final2 = sub2Pad2';
-
-sub2Spline3 = spline(50.*(1:length(lassTestPred3)),lassTestPred3',(50:50*length(lassTestPred3)));
-sub2Pad3 = [zeros(1,200) sub2Spline3 zeros(1,49)];
-sub2Final3 = sub2Pad3';
-
-sub2Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
-sub2Pad5 = [zeros(1,200) sub2Spline5 zeros(1,49)];
-sub2Final5 = sub2Pad5';
-%% Saving
-sub2chp2 = [sub2Final1 sub2Final2 sub2Final3 zeros(147500,1) sub2Final5];
-save sub2checkpoint2 sub2chp2
+% lassTestPred1 = lassTestPred1(:,1);
+% lassTestPred2 = lassTestPred2(:,1);
+% lassTestPred3 = lassTestPred3(:,1);
+% lassTestPred5 = lassTestPred5(:,1);
+% 
+% %% spline
+% sub2Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
+% sub2Pad1 = [zeros(1,200) sub2Spline1 zeros(1,49)];
+% sub2Final1 = sub2Pad1';
+% 
+% sub2Spline2 = spline(50.*(1:length(lassTestPred2)),lassTestPred2',(50:50*length(lassTestPred2)));
+% sub2Pad2 = [zeros(1,200) sub2Spline2 zeros(1,49)];
+% sub2Final2 = sub2Pad2';
+% 
+% sub2Spline3 = spline(50.*(1:length(lassTestPred3)),lassTestPred3',(50:50*length(lassTestPred3)));
+% sub2Pad3 = [zeros(1,200) sub2Spline3 zeros(1,49)];
+% sub2Final3 = sub2Pad3';
+% 
+% sub2Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
+% sub2Pad5 = [zeros(1,200) sub2Spline5 zeros(1,49)];
+% sub2Final5 = sub2Pad5';
+% %% Saving
+% sub2chp2 = [sub2Final1 sub2Final2 sub2Final3 zeros(147500,1) sub2Final5];
+% save sub2checkpoint2 sub2chp2
