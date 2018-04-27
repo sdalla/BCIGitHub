@@ -68,7 +68,7 @@ sub1X = ones(5999,v*N*f+1);
 %     disp(m);
 %     X(m,:) = [1 reshape(sub1tdv{:}(m:(m+N-1)),1,62*N)];
 % end
-for j = 1:62
+for j = 1:v
     %disp(j);
     for i = N:5999
         % error with sub1f20_25 input
