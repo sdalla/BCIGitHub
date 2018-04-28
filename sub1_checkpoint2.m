@@ -125,26 +125,38 @@ lassTestPred3 = sub1XTest*B3 + repmat(FitInfo3.Intercept,size((sub1XTest*B3),1),
 lassTestPred5 = sub1XTest*B5 + repmat(FitInfo5.Intercept,size((sub1XTest*B5),1),1);
 
 lassTestPred1 = lassTestPred1(:,1);
+
 lassTestPred2 = lassTestPred2(:,1);
+
 lassTestPred3 = lassTestPred3(:,1);
+
 lassTestPred5 = lassTestPred5(:,1);
+
+
 
 %% spline
 sub1Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
 sub1Pad1 = [zeros(1,200) sub1Spline1 zeros(1,49)];
 sub1Final1 = sub1Pad1';
+sub1Final1 = medfilt1(sub1Final1(:,1),1000);
 
 sub1Spline2 = spline(50.*(1:length(lassTestPred2)),lassTestPred2',(50:50*length(lassTestPred2)));
 sub1Pad2 = [zeros(1,200) sub1Spline2 zeros(1,49)];
 sub1Final2 = sub1Pad2';
+sub1Final2 = medfilt1(sub1Final2(:,1),1000);
+
 
 sub1Spline3 = spline(50.*(1:length(lassTestPred3)),lassTestPred3',(50:50*length(lassTestPred3)));
 sub1Pad3 = [zeros(1,200) sub1Spline3 zeros(1,49)];
 sub1Final3 = sub1Pad3';
+sub1Final3 = medfilt1(sub1Final3(:,1),1000);
+
 
 sub1Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
 sub1Pad5 = [zeros(1,200) sub1Spline5 zeros(1,49)];
 sub1Final5 = sub1Pad5';
+sub1Final5 = medfilt1(sub1Final5(:,1),1000);
+
 %% saving
 sub1chp2 = [sub1Final1 sub1Final2 sub1Final3 zeros(147500,1) sub1Final5];
-save sub1checkpoint2 sub1chp2
+save sub1checkpoint2a sub1chp2
