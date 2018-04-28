@@ -21,7 +21,8 @@ function [predicted_dg] = make_predictions(test_ecog)
 % each subject and finger - called B
 % (2) a 5x3 (finger x subject) cell array each containing the lasso output
 % for incercept output for each subject and finger - called intercept
-load TWTIFN.mat 
+load B.mat
+load intercept.mat
 
 %% Pre-processing ecog signal
 % Sub 1 Channel Elimination
@@ -174,7 +175,7 @@ for subj = 1:3
             continue
         end
         % predict dg based on ECOG for each finger
-        predy = testset*B{i,subj} + repmat(intercept{i,subj},size((testset*B{i,subj}),1),1);
+        predy = testset*B{i,subj} + repmat(Intercept{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
         
         % spline the data
