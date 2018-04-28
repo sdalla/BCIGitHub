@@ -148,9 +148,9 @@ sub2Pad5 = [zeros(1,200) sub2Spline5 zeros(1,49)];
 sub2Final5 = sub2Pad5';
 
 sub2Final1 = medfilt1(sub2Final1(:,1),1000);
-sub2Final2 = medfilt1(sub2Final2(:,1),1000);
-sub2Final3 = medfilt1(sub2Final3(:,1),1000);
-sub2Final5 = medfilt1(sub2Final5(:,1),1000);
+sub2Final1 = medfilt1(sub1Final1(:,1),1000);
+sub1Final1 = medfilt1(sub1Final1(:,1),1000);
+sub1Final1 = medfilt1(sub1Final1(:,1),1000);
 %% Saving
 sub2chp2 = [sub2Final1 sub2Final2 sub2Final3 zeros(147500,1) sub2Final5];
 save sub2checkpoint2a sub2chp2
