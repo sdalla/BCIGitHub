@@ -138,9 +138,8 @@ sub3Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(
 sub3Pad5 = [zeros(1,200) sub3Spline5 zeros(1,49)];
 sub3Final5 = sub3Pad5';
 
-sub3chp2 = [sub3Final1 sub3Final2 sub3Final3 zeros(147500,1) sub3Final5];
-save sub3checkpoint2 sub3chp2
-%% post processing of the output (filtering???)
+
+%% post processing of the output (filtering w filter design)
 
 %sampling freq
 Fs = 1000;
@@ -162,6 +161,12 @@ postFilter = temp.postFilter;
 filteredOutput = filtfilt(postFilter,1.0,sub3chp2(:,1));
 figure()
 plot(filteredOutput)
+%% filtering with  medfilt
+sub3Final1 = medfilt1(sub3Final1(:,1),1000);
+sub3Final2 = medfilt1(sub3Final2(:,1),1000);
+sub3Final3 = medfilt1(sub3Final3(:,1),1000);
+sub3Final5 = medfilt1(sub3Final5(:,1),1000);
 
 %% saving the data to a .mat file
-save sub3checkpoint2 sub3chp2
+sub3chp2 = [sub3Final1 sub3Final2 sub3Final3 zeros(147500,1) sub3Final5];
+save sub3checkpoint2a sub3chp2
