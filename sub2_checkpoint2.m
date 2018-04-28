@@ -146,11 +146,17 @@ sub2Final3 = sub2Pad3';
 sub2Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
 sub2Pad5 = [zeros(1,200) sub2Spline5 zeros(1,49)];
 sub2Final5 = sub2Pad5';
-
+%% filtering w medfilt
 sub2Final1 = medfilt1(sub2Final1(:,1),1000);
 sub2Final2 = medfilt1(sub2Final2(:,1),1000);
 sub2Final3 = medfilt1(sub2Final3(:,1),1000);
 sub2Final5 = medfilt1(sub2Final5(:,1),1000);
+
+%% filtering w smooth
+sub2Final1smooth = smooth(sub2Final1(:,1),0.05,'rloess');
+sub2Final2smooth = smooth(sub2Final2(:,1),0.05,'rloess');
+sub2Final3smooth = smooth(sub2Final4(:,1),0.05,'rloess');
+sub2Final5smooth = smooth(sub2Final5(:,1),0.05,'rloess');
 %% Saving
-sub2chp2 = [sub2Final1 sub2Final2 sub2Final3 zeros(147500,1) sub2Final5];
+sub2chp2 = [sub2Final1smooth sub2Final2smooth sub2Final3smooth zeros(147500,1) sub2Final5smooth];
 save sub2checkpoint2a sub2chp2
