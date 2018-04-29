@@ -20,28 +20,31 @@ load('Sub1_Leaderboard_ecog.mat');
 
 ch_remove = [55 21 44 52 18 27 40 49]; %remove channels found in other mat file
 channel = 1:62;
-% channel(ch_remove) = [];
+channel(ch_remove) = [];
 ind = 1;
 for j = channel
     Sub1_Training_ecog_ch{ind} = Sub1_Training_ecog{j};
     Sub1_Test_ecog_ch{ind} = Sub1_Leaderboard_ecog{j};
     ind = ind + 1;
 end
-%% break into freq bands using spectrogram, could do next section instead
+
 v = 62 - length(ch_remove);
-window = winLen*fs;
-freq_arr = 0:1:500; 
-%subject 1
-for i = 1:v
-    [s,freq,t] = spectrogram(Sub1_Training_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
-    sub1f1_60{i} = abs(s(1:60,:));
-    sub1f60_100{i} = abs(s(60:100,:));
-    sub1f100_200{i} = abs(s(100:200,:));
-    [s,freq,t] = spectrogram(Sub1_Test_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
-    sub1f1_60Test{i} = abs(s(1:60,:));
-    sub1f60_100Test{i} = abs(s(60:100,:));
-    sub1f100_200Test{i} = abs(s(100:200,:));
-end
+
+% %% break into freq bands using spectrogram, could do next section instead
+% v = 62 - length(ch_remove);
+% window = winLen*fs;
+% freq_arr = 0:1:500; 
+% %subject 1
+% for i = 1:v
+%     [s,freq,t] = spectrogram(Sub1_Training_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
+%     sub1f1_60{i} = abs(s(1:60,:));
+%     sub1f60_100{i} = abs(s(60:100,:));
+%     sub1f100_200{i} = abs(s(100:200,:));
+%     [s,freq,t] = spectrogram(Sub1_Test_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
+%     sub1f1_60Test{i} = abs(s(1:60,:));
+%     sub1f60_100Test{i} = abs(s(60:100,:));
+%     sub1f100_200Test{i} = abs(s(100:200,:));
+% end
 
 %% break into freq bands using FIR filters and filterDesigner
 % filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
@@ -162,11 +165,11 @@ sub1Final2 = medfilt1(sub1Final2(:,1),1000);
 sub1Final3 = medfilt1(sub1Final3(:,1),1000);
 sub1Final5 = medfilt1(sub1Final5(:,1),1000);
 %% filtering w smooth
-sub1Final1smooth = smooth(sub1Final1(:,1),0.05,'rloess');
-sub1Final2smooth = smooth(sub1Final2(:,1),0.05,'rloess');
-sub1Final3smooth = smooth(sub1Final4(:,1),0.05,'rloess');
-sub1Final5smooth = smooth(sub1Final5(:,1),0.05,'rloess');
+% sub1Final1smooth = smooth(sub1Final1(:,1),0.05,'rloess');
+% sub1Final2smooth = smooth(sub1Final2(:,1),0.05,'rloess');
+% sub1Final3smooth = smooth(sub1Final4(:,1),0.05,'rloess');
+% sub1Final5smooth = smooth(sub1Final5(:,1),0.05,'rloess');
 
 %% saving
-sub1chp2 = [sub1Final1smooth sub1Final2smooth sub1Final3smooth zeros(147500,1) sub1Final5smooth];
-save sub1checkpoint2a sub1chp2
+sub1chp2 = [sub1Final1 sub1Final2 sub1Final3 zeros(147500,1) sub1Final5];
+save sub1checkpoint2b sub1chp2
