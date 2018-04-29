@@ -133,6 +133,21 @@ sub1Final1 = medfilt1(sub1Final1(:,1),1000);
 % sub1Final3 = medfilt1(sub1Final3(:,1),1000);
 % sub1Final5 = medfilt1(sub1Final5(:,1),1000);
 
+%% kmeans
+% Attempt at using kmeans to cluster training dg into 2 groups (expected to
+% be moving or not moving) - thresholds determined by kmeans
+% idx is 1 or 2 depending on which group the data point at that index is
+% classified as
+% Next steps: use output of kmeans (idx classification as 1 or 2) to use
+% knn and classify as moving or not
+sub1chp2 = load('sub1checkpoint2.mat');
+sub1dg1 = Sub1_Training_dg{1}(1:300000-length(sub1chp2(:,1))-1);
+[idx,c] = kmeans(sub1dg1,2);
+[sortc, idxc] = sort(c); %sort outcomes to determine color labels
+
+
+knnmodel = knnclassify(sub1Final1,Sub1_Training_dg{1}(1:300000-length(sub1Final1)-1),idx);
+
 %% knn
 % Attempt 1 at classifying predicted dg as moving or not moving
 % Label matrix is for Training dg - 1 if above threshold (determined based
@@ -143,22 +158,9 @@ threshold = 0;
 labelMatrix = NaN(length(Sub1_Training_dg{1}(1:300000-length(sub1Final1)-1)),1);
 for i = 1:length(Sub1_Training_dg{1}(1:300000-length(sub1Final1)-1))
     if Sub1_Training_dg{1}(i) > threshold
-    labelMatrix(i) = 1;
-    else labelMatrix(i) = 0;
+        labelMatrix(i) = 1;
+    else
+        labelMatrix(i) = 0;
     end
 end
 knnmodel = knnclassify(sub1Final1,Sub1_Training_dg{1}(1:300000-length(sub1Final1)-1),labelMatrix);
-
-%% kmeans
-% Attempt at using kmeans to cluster training dg into 2 groups (expected to
-% be moving or not moving) - thresholds determined by kmeans
-% idx is 1 or 2 depending on which group the data point at that index is
-% classified as
-% Next steps: use output of kmeans (idx classification as 1 or 2) to use
-% knn and classify as moving or not
-sub1dg1 = Sub1_Training_dg{1}(1:300000-length(sub1chp2(:,1))-1);
-[idx,c] = kmeans(sub1dg1,2);
-[sortc, idxc] = sort(c); %sort outcomes to determine color labels
-
-
-knnmodel = knnclassify(sub1Final1,Sub1_Training_dg{1}(1:300000-length(sub1Final1)-1),idx);
