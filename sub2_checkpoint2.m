@@ -29,20 +29,20 @@ for j = channel
 end
 %% break into freq bands using spectrogram, could do next section instead
 v = 48 - length(ch_remove);
-window = winLen*fs;
-freq_arr = 0:1:500; 
-
-%subject 2
-for i = 1:v
-    [s,freq,t] = spectrogram(Sub2_Training_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
-    sub2f1_60{i} = abs(s(1:60,:));
-    sub2f60_100{i} = abs(s(60:100,:));
-    sub2f100_200{i} = abs(s(100:200,:));
-    [s,freq,t] = spectrogram(Sub2_Test_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
-    sub2f1_60Test{i} = abs(s(1:60,:));
-    sub2f60_100Test{i} = abs(s(60:100,:));
-    sub2f100_200Test{i} = abs(s(100:200,:));
-end
+% window = winLen*fs;
+% freq_arr = 0:1:500; 
+% 
+% %subject 2
+% for i = 1:v
+%     [s,freq,t] = spectrogram(Sub2_Training_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
+%     sub2f1_60{i} = abs(s(1:60,:));
+%     sub2f60_100{i} = abs(s(60:100,:));
+%     sub2f100_200{i} = abs(s(100:200,:));
+%     [s,freq,t] = spectrogram(Sub2_Test_ecog_ch{1,i},window,winDisp*fs,freq_arr,fs);
+%     sub2f1_60Test{i} = abs(s(1:60,:));
+%     sub2f60_100Test{i} = abs(s(60:100,:));
+%     sub2f100_200Test{i} = abs(s(100:200,:));
+% end
 
 %% break into freq bands using FIR filters and filterDesigner
 % filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
@@ -129,7 +129,7 @@ lassTestPred1 = lassTestPred1(:,1);
 lassTestPred2 = lassTestPred2(:,1);
 lassTestPred3 = lassTestPred3(:,1);
 lassTestPred5 = lassTestPred5(:,1);
-medfilt1(lassTestPred1,1000);
+% medfilt1(lassTestPred1,1000);
 %% spline
 sub2Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
 sub2Pad1 = [zeros(1,200) sub2Spline1 zeros(1,49)];
@@ -153,10 +153,10 @@ sub2Final3 = medfilt1(sub2Final3(:,1),1000);
 sub2Final5 = medfilt1(sub2Final5(:,1),1000);
 
 %% filtering w smooth
-sub2Final1smooth = smooth(sub2Final1(:,1),0.05,'rloess');
-sub2Final2smooth = smooth(sub2Final2(:,1),0.05,'rloess');
-sub2Final3smooth = smooth(sub2Final4(:,1),0.05,'rloess');
-sub2Final5smooth = smooth(sub2Final5(:,1),0.05,'rloess');
+% sub2Final1smooth = smooth(sub2Final1(:,1),0.05,'rloess');
+% sub2Final2smooth = smooth(sub2Final2(:,1),0.05,'rloess');
+% sub2Final3smooth = smooth(sub2Final4(:,1),0.05,'rloess');
+% sub2Final5smooth = smooth(sub2Final5(:,1),0.05,'rloess');
 %% Saving
 sub2chp2 = [sub2Final1smooth sub2Final2smooth sub2Final3smooth zeros(147500,1) sub2Final5smooth];
-save sub2checkpoint2a sub2chp2
+save sub2checkpoint2b sub2chp2
