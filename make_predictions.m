@@ -35,7 +35,7 @@ channel1 = 1:62;
 channel1(ch_remove1) = [];
 ind = 1;
 for j = channel1
-    Sub1_ecog_ch{ind} = test_ecog{1}(:,j);
+    Sub1_ecog_ch{ind} = cell2mat(test_ecog{1}(:,j));
     ind = ind + 1;
 end
 v1 = size(Sub1_ecog_ch,2);
@@ -46,7 +46,7 @@ channel2 = 1:48;
 channel2(ch_remove2) = [];
 ind = 1;
 for j = channel2
-    Sub2_ecog_ch{ind} = test_ecog{2}(:,j);
+    Sub2_ecog_ch{ind} = cell2mat(test_ecog{2}(:,j));
     ind = ind + 1;
 end
 v2 = size(Sub2_ecog_ch,2);
@@ -57,7 +57,7 @@ channel3 = 1:64;
 channel3(ch_remove3) = [];
 ind = 1;
 for j = channel3
-    Sub3_ecog_ch{ind} = test_ecog{3}(:,j);
+    Sub3_ecog_ch{ind} = cell2mat(test_ecog{3}(:,j));
     ind = ind + 1;
 end
 v3 = size(Sub3_ecog_ch,2);
@@ -79,7 +79,6 @@ for i = 1:v1
 end
 
 % filter subject 2
-k = 0;
 for k = 1:v2
     sub2_1_60filt{k} = filtfilt(Filter1,1.0,Sub2_ecog_ch{k});
     sub2_60_100filt{k} = filtfilt(Filter2,1.0,Sub2_ecog_ch{k});
