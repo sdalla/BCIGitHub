@@ -1,8 +1,10 @@
 function [predicted_dg] = make_predictions(test_ecog)
-% Inputs: test_ecog - 3 x 1 cell array containing ECoG for each subject, where test_ecog{i} 
+
+%
+% Inputs: test_ecog - 3 x 1 cell array containing ECoG for each subject, where test_ecog{i}
 % to the ECoG for subject i. Each cell element contains a N x M testing ECoG,
 % where N is the number of samples and M is the number of EEG channels.
-% Outputs: predicted_dg - 3 x 1 cell array, where predicted_dg{i} contains the 
+% Outputs: predicted_dg - 3 x 1 cell array, where predicted_dg{i} contains the
 % data_glove prediction for subject i, which is an N x 5 matrix (for
 % fingers 1:5)
 % Run time: The script has to run less than 1 hour.
@@ -11,11 +13,11 @@ function [predicted_dg] = make_predictions(test_ecog)
 
 % Load Model
 % Imagine this mat file has the following variables:
-% winDisp, filtTPs, trainFeats (cell array), 
+% winDisp, filtTPs, trainFeats (cell array),
 
 
 % mat file will contain:
-% (1) a 5x3 (finger x subject) cell array containing the B lasso output for 
+% (1) a 5x3 (finger x subject) cell array containing the B lasso output for
 % each subject and finger - called B
 % (2) a 5x3 (finger x subject) cell array each containing the lasso output
 % for incercept output for each subject and finger - called intercept
@@ -58,8 +60,11 @@ disp('pp');
 %% Feature extraction
 % Filter data
 load('Filter1.mat');
+%Filter1 = temp.Filter1;
 load('Filter2.mat');
+%Filter2 = temp.Filter2;
 load('Filter3.mat');
+%Filter3 = temp.Filter3;
 
 % filter subject 1
 for i = 1:v1
@@ -156,31 +161,73 @@ disp('cxm');
 predicted_dg = cell(3,1);
 
 %for each subject
-for subj = 1:3 
+for subj = 1:3
     testset = X{subj};
     
     %initialize the predicted dataglove matrix
     yhat = zeros(size(test_ecog{1},1),5);
-    disp(subj);
+    
     %for each finger
-    for i = 1:5 
+    for i = 1:5
         if i == 4
             yhat(:,i) = 0;
             continue
         end
-        
         % predict dg based on ECOG for each finger
         predy = testset*B{i,subj} + repmat(intercept{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
-
+        
         % spline the data
         subSpline = spline(50.*(1:length(predy)),predy',(50:50*length(predy)));
-        padSpline = [zeros(1,200) subSpline zeros(1,49)];
-
+        padSpline{subj,i} = [zeros(1,200) subSpline zeros(1,49)];
+        
         % filter predicted finger positions
-        yhat(:,i) = medfilt1(padSpline,100);
+        %yhat(:,i) = medfilt1(padSpline,100);
+        %disp('1');
     end
-    
-    predicted_dg{subj} = yhat;
+    %predicted_dg{subj} = yhat;
 end
-disp('lp');
+
+%% knn
+load idx.mat
+load idxc.mat
+load training_dg.mat
+for subj = 1:3
+    for i = 1:5
+        if i ==4
+            knnmodel{i,subj} = 0;
+            filtSpline{i,subj} = 0;
+            
+        else
+        knnmodel{i,subj} = knnclassify(padSpline{subj,i}',training_dg{i,subj},idx{i,subj});
+        filtSpline{i,subj} = medfilt1(padSpline{subj,i},1000);
+        end
+    end
+end
+disp('knn done')
+for subj = 1:3
+    for i = 1:5
+        
+        for k = 1:length(knnmodel{i,subj})
+            if i == 4
+                knnfinal{i,subj}(k) = 0;
+                
+            else
+            if knnmodel{i,subj}(k) == idxc{i,subj}(1)
+                knnfinal{i,subj}(k) = filtSpline{i,subj}(k);
+            else
+                knnfinal{i,subj}(k) = padSpline{subj,i}(k);
+            end
+            end
+        end
+    end
+end
+%%
+for subj = 1:3
+    for i = 1:5
+        predicted_dg{subj}(:,i) = knnfinal{i,subj};
+        if i == 4
+            predicted_dg{subj}(:,i) = zeros(size(knnfinal{1,subj},2),1);
+        end
+    end
+end

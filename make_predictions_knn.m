@@ -1,4 +1,4 @@
-function [predicted_dg] = make_predictions_knn(test_ecog)
+function [predicted_dg] = make_predictions(test_ecog)
 
 %
 % Inputs: test_ecog - 3 x 1 cell array containing ECoG for each subject, where test_ecog{i}
