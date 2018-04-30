@@ -21,6 +21,7 @@ function [predicted_dg] = make_predictions_knn(test_ecog)
 % each subject and finger - called B
 % (2) a 5x3 (finger x subject) cell array each containing the lasso output
 % for incercept output for each subject and finger - called intercept
+test_ecog = leaderboard;
 load B.mat
 load intercept.mat
 %% Pre-processing ecog signal
@@ -169,10 +170,10 @@ for subj = 1:3
     
     %for each finger
     for i = 1:5
-        %         if i == 4
-        %             yhat(:,i) = 0;
-        %             continue
-        %         end
+        if i == 4
+            yhat(:,i) = 0;
+            continue
+        end
         % predict dg based on ECOG for each finger
         predy = testset*B{i,subj} + repmat(intercept{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
@@ -194,20 +195,50 @@ load idxc.mat
 load training_dg.mat
 for subj = 1:3
     for i = 1:5
-        knnmodel{i,subj} = knnclassify(padSpline{subj,i},training_dg{i,subj},idx{i,subj});
+        if i ==4
+            knnmodel{i,subj} = 0;
+            filtSpline{i,subj} = 0;
+            
+        else
+        knnmodel{i,subj} = knnclassify(padSpline{subj,i}',training_dg{i,subj},idx{i,subj});
         filtSpline{i,subj} = medfilt1(padSpline{subj,i},1000);
+        end
     end
 end
-
+disp('knn done')
 for subj = 1:3
     for i = 1:5
+        
         for k = 1:length(knnmodel{i,subj})
+            if i ==4
+                knnfinal{i,subj}(k) = 0;
+                
+            else
             if knnmodel{i,subj}(k) == idxc{i,subj}(1)
                 knnfinal{i,subj}(k) = filtSpline{i,subj}(k);
             else
-                knnfinal{i,subj}(k) = padSpline{i,subj}(k);
+                knnfinal{i,subj}(k) = padSpline{subj,i}(k);
+            end
             end
         end
+    end
+end
+
+%%
+load predicted_dg_knn2
+%%
+sum(predicted_dg{3}(:,2) == knnfinal{2,3}')
+
+
+
+plot(knnfinal{2,3}')
+hold on
+plot(predicted_dg{3}(:,2))
+legend('final','predict')
+%%
+for i = 1:3
+    for j = [1 2 3 5]
+        corr(predicted_dg{i}(:,j), knnfinal{j,i}')
     end
 end
 
