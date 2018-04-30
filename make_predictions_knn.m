@@ -174,7 +174,7 @@ for subj = 1:3
         %             continue
         %         end
         % predict dg based on ECOG for each finger
-        predy = testset*B{i,subj} + repmat(intercept1{i,subj},size((testset*B{i,subj}),1),1);
+        predy = testset*B{i,subj} + repmat(intercept{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
         
         % spline the data
