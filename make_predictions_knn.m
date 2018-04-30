@@ -169,22 +169,47 @@ for subj = 1:3
     
     %for each finger
     for i = 1:5 
-        if i == 4
-            yhat(:,i) = 0;
-            continue
-        end
+%         if i == 4
+%             yhat(:,i) = 0;
+%             continue
+%         end
         % predict dg based on ECOG for each finger
         predy = testset*B{i,subj} + repmat(intercept1{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
         
         % spline the data
         subSpline = spline(50.*(1:length(predy)),predy',(50:50*length(predy)));
-        padSpline = [zeros(1,200) subSpline zeros(1,49)];
+        padSpline{subj,i} = [zeros(1,200) subSpline zeros(1,49)];
         
         % filter predicted finger positions
-        yhat(:,i) = medfilt1(padSpline,100);
-        disp('1');
+        %yhat(:,i) = medfilt1(padSpline,100);
+        %disp('1');
     end
-    predicted_dg{subj} = yhat;
+    %predicted_dg{subj} = yhat;
 end
-disp('lp');
+
+%% knn
+for i = 1:5
+    [idx1,c1] = kmeans(Sub3_Training_dg{i},2);
+    [sortc, idxc] = sort(c1);
+    idx{i} = idx1;
+    c{i} = sortc;
+    
+    knnmodel{i} = knnclassify(sub3knn(:,i),Sub3_Training_dg{i},idx{i});
+end
+
+sub3Filt1 = medfilt1(sub3Final1(:,1),1000);
+sub3Filt2 = medfilt1(sub3Final2(:,1),1000);
+sub3Filt3 = medfilt1(sub3Final3(:,1),1000);
+sub3Filt5 = medfilt1(sub3Final5(:,1),1000);
+sub3Filt = [sub3Filt1 sub3Filt2 sub3Filt3 zeros(147500,1) sub3Filt5];
+
+for i = 1:5
+    for j = 1:length(sub3Filt1)
+        if knnmodel{i}(j) == idx{i}(1)
+            knnfinal{i}(j) = sub3Filt(j,i);
+        else
+            knnfinal{i}(j) = sub3knn(j,i);
+        end
+    end
+end

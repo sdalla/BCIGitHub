@@ -119,7 +119,8 @@ lassTestPred3 = lassTestPred3(:,1);
 
 lassTestPred5 = lassTestPred5(:,1);
 
-
+sub1_intercept = {B1 B2 B3 [] B5};
+sub1_B = {B1 B2 B3 [] B5};
 
 %% spline
 sub1Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
