@@ -34,7 +34,7 @@ end
 v1 = size(Sub1_ecog_ch,2);
 
 % Sub 2 Channel Elimination
-ch_remove2 = [23 37 38];
+ch_remove2 = [21 23 37 38 39];
 channel2 = 1:48;
 channel2(ch_remove2) = [];
 ind = 1;
