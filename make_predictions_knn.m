@@ -37,7 +37,7 @@ end
 v1 = size(Sub1_ecog_ch,2);
 
 % Sub 2 Channel Elimination
-ch_remove2 = [23 37 38];
+ch_remove2 = [21 23 37 38 39];
 channel2 = 1:48;
 channel2(ch_remove2) = [];
 ind = 1;
@@ -210,7 +210,7 @@ for subj = 1:3
     for i = 1:5
         
         for k = 1:length(knnmodel{i,subj})
-            if i ==4
+            if i == 4
                 knnfinal{i,subj}(k) = 0;
                 
             else
@@ -224,21 +224,8 @@ for subj = 1:3
     end
 end
 
-%%
-load predicted_dg_knn2
-%%
-sum(predicted_dg{3}(:,2) == knnfinal{2,3}')
-
-
-
-plot(knnfinal{2,3}')
-hold on
-plot(predicted_dg{3}(:,2))
-legend('final','predict')
-%%
-for i = 1:3
-    for j = [1 2 3 5]
-        corr(predicted_dg{i}(:,j), knnfinal{j,i}')
+for subj = 1:3
+    for i = 1:5
+        predicted_dg{subj}(:,i) = knnfinal{i,subj}
     end
 end
-
