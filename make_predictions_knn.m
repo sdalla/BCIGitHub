@@ -1,10 +1,10 @@
 function [predicted_dg] = make_predictions_knn(test_ecog)
 
 %
-% Inputs: test_ecog - 3 x 1 cell array containing ECoG for each subject, where test_ecog{i} 
+% Inputs: test_ecog - 3 x 1 cell array containing ECoG for each subject, where test_ecog{i}
 % to the ECoG for subject i. Each cell element contains a N x M testing ECoG,
 % where N is the number of samples and M is the number of EEG channels.
-% Outputs: predicted_dg - 3 x 1 cell array, where predicted_dg{i} contains the 
+% Outputs: predicted_dg - 3 x 1 cell array, where predicted_dg{i} contains the
 % data_glove prediction for subject i, which is an N x 5 matrix (for
 % fingers 1:5)
 % Run time: The script has to run less than 1 hour.
@@ -13,16 +13,16 @@ function [predicted_dg] = make_predictions_knn(test_ecog)
 
 % Load Model
 % Imagine this mat file has the following variables:
-% winDisp, filtTPs, trainFeats (cell array), 
+% winDisp, filtTPs, trainFeats (cell array),
 
 
 % mat file will contain:
-% (1) a 5x3 (finger x subject) cell array containing the B lasso output for 
+% (1) a 5x3 (finger x subject) cell array containing the B lasso output for
 % each subject and finger - called B
 % (2) a 5x3 (finger x subject) cell array each containing the lasso output
 % for incercept output for each subject and finger - called intercept
 load B.mat
-load intercept1.mat
+load intercept.mat
 %% Pre-processing ecog signal
 % Sub 1 Channel Elimination
 ch_remove1 = [55 21 44 52 18 27 40 49]; %remove channels found in other mat file
@@ -161,18 +161,18 @@ disp('cxm');
 predicted_dg = cell(3,1);
 
 %for each subject
-for subj = 1:3 
+for subj = 1:3
     testset = X{subj};
     
     %initialize the predicted dataglove matrix
     yhat = zeros(size(test_ecog{1},1),5);
     
     %for each finger
-    for i = 1:5 
-%         if i == 4
-%             yhat(:,i) = 0;
-%             continue
-%         end
+    for i = 1:5
+        %         if i == 4
+        %             yhat(:,i) = 0;
+        %             continue
+        %         end
         % predict dg based on ECOG for each finger
         predy = testset*B{i,subj} + repmat(intercept1{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
@@ -189,27 +189,25 @@ for subj = 1:3
 end
 
 %% knn
-for i = 1:5
-    [idx1,c1] = kmeans(Sub3_Training_dg{i},2);
-    [sortc, idxc] = sort(c1);
-    idx{i} = idx1;
-    c{i} = sortc;
-    
-    knnmodel{i} = knnclassify(sub3knn(:,i),Sub3_Training_dg{i},idx{i});
+load idx.mat
+load idxc.mat
+load training_dg.mat
+for subj = 1:3
+    for i = 1:5
+        knnmodel{i,subj} = knnclassify(padSpline{subj,i},training_dg{i,subj},idx{i,subj});
+        filtSpline{i,subj} = medfilt1(padSpline{subj,i},1000);
+    end
 end
 
-sub3Filt1 = medfilt1(sub3Final1(:,1),1000);
-sub3Filt2 = medfilt1(sub3Final2(:,1),1000);
-sub3Filt3 = medfilt1(sub3Final3(:,1),1000);
-sub3Filt5 = medfilt1(sub3Final5(:,1),1000);
-sub3Filt = [sub3Filt1 sub3Filt2 sub3Filt3 zeros(147500,1) sub3Filt5];
-
-for i = 1:5
-    for j = 1:length(sub3Filt1)
-        if knnmodel{i}(j) == idx{i}(1)
-            knnfinal{i}(j) = sub3Filt(j,i);
-        else
-            knnfinal{i}(j) = sub3knn(j,i);
+for subj = 1:3
+    for i = 1:5
+        for k = 1:length(knnmodel{i,subj})
+            if knnmodel{i,subj}(k) == idxc{i,subj}(1)
+                knnfinal{i,subj}(k) = filtSpline{i,subj}(k);
+            else
+                knnfinal{i,subj}(k) = padSpline{i,subj}(k);
+            end
         end
     end
 end
+
