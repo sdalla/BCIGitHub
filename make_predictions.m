@@ -22,7 +22,7 @@ function [predicted_dg] = make_predictions(test_ecog)
 % (2) a 5x3 (finger x subject) cell array each containing the lasso output
 % for incercept output for each subject and finger - called intercept
 load B.mat
-load intercept1.mat
+load intercept.mat
 %% Pre-processing ecog signal
 % Sub 1 Channel Elimination
 ch_remove1 = [55 21 44 52 18 27 40 49]; %remove channels found in other mat file
@@ -173,19 +173,17 @@ for subj = 1:3
             yhat(:,i) = 0;
             continue
         end
-        disp('a');
+
         % predict dg based on ECOG for each finger
-        predy = testset*B{i,subj} + repmat(intercept1{i,subj},size((testset*B{i,subj}),1),1);
+        predy = testset*B{i,subj} + repmat(intercept{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
-        disp('b');
+
         % spline the data
         subSpline = spline(50.*(1:length(predy)),predy',(50:50*length(predy)));
         padSpline = [zeros(1,200) subSpline zeros(1,49)];
-        disp('c');
+
         % filter predicted finger positions
         yhat(:,i) = medfilt1(padSpline,100);
-        disp('d');
-        disp(i);
     end
     
     predicted_dg{subj} = yhat;
