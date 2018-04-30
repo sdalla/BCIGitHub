@@ -123,6 +123,7 @@ sub1_intercept = {FitInfo1.Intercept FitInfo2.Intercept FitInfo3.Intercept [] Fi
 sub1_B = {B1 B2 B3 [] B5};
 save sub1_intercept sub1_intercept
 save sub1_B sub1_B
+disp('done')
 
 %% spline
 sub1Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
