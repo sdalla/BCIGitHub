@@ -168,7 +168,7 @@ for subj = 1:3
             yhat(:,i) = 0;
             continue
         end
-
+        
         % predict dg based on ECOG for each finger
         predy = testset*B{i,subj} + repmat(intercept{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
