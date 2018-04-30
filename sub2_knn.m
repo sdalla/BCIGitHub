@@ -118,7 +118,10 @@ lassTestPred3 = lassTestPred3(:,1);
 
 lassTestPred5 = lassTestPred5(:,1);
 
-
+sub2_intercept = {FitInfo1.Intercept FitInfo2.Intercept FitInfo3.Intercept [] FitInfo5.Intercept};
+sub2_B = {B1 B2 B3 [] B5};
+save sub2_intercept sub2_intercept
+save sub2_B sub2_B
 
 %% spline
 sub2Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(lassTestPred1)));
