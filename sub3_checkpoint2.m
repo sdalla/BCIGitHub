@@ -167,10 +167,10 @@ sub3Final2 = medfilt1(sub3Final2(:,1),1000);
 sub3Final3 = medfilt1(sub3Final3(:,1),1000);
 sub3Final5 = medfilt1(sub3Final5(:,1),1000);
 %% filtering w smooth
-sub3Final1smooth = smooth(sub3Final1(:,1),0.05,'rloess');
-sub3Final2smooth = smooth(sub3Final2(:,1),0.05,'rloess');
-sub3Final3smooth = smooth(sub3Final4(:,1),0.05,'rloess');
-sub3Final5smooth = smooth(sub3Final5(:,1),0.05,'rloess');
+sub3Final1smooth = smooth(sub3Final1(:,1),0.005,'rloess');
+sub3Final2smooth = smooth(sub3Final2(:,1),0.005,'rloess');
+sub3Final3smooth = smooth(sub3Final3(:,1),0.005,'rloess');
+sub3Final5smooth = smooth(sub3Final5(:,1),0.005,'rloess');
 %% saving the data to a .mat file
 sub3chp2 = [sub3Final1smooth sub3Final2smooth sub3Final3smooth zeros(147500,1) sub3Final5smooth];
 save sub3checkpoint2a sub3chp2
