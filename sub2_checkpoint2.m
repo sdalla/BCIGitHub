@@ -18,7 +18,7 @@ load('Sub2DataGlove.mat');
 %leaderboard ecog
 load('Sub2_Leaderboard_ecog.mat');
 
-ch_remove = [23 37 38]; %remove channels found in other mat file
+ch_remove = [21 23 37 38 39]; %remove channels found in other mat file
 channel = 1:48;
 channel(ch_remove) = [];
 ind = 1;
@@ -158,5 +158,5 @@ sub2Final5 = medfilt1(sub2Final5(:,1),1000);
 % sub2Final3smooth = smooth(sub2Final4(:,1),0.05,'rloess');
 % sub2Final5smooth = smooth(sub2Final5(:,1),0.05,'rloess');
 %% Saving
-sub2chp2 = [sub2Final1smooth sub2Final2smooth sub2Final3smooth zeros(147500,1) sub2Final5smooth];
+sub2chp2 = [sub2Final1 sub2Final2smooth sub2Final3smooth zeros(147500,1) sub2Final5smooth];
 save sub2checkpoint2b sub2chp2
