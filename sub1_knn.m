@@ -119,7 +119,7 @@ lassTestPred3 = lassTestPred3(:,1);
 
 lassTestPred5 = lassTestPred5(:,1);
 
-sub1_intercept = {B1 B2 B3 [] B5};
+sub1_intercept = {FitInfo1.Intercept FitInfo2.Intercept FitInfo3.Intercept [] FitInfo5.Intercept};
 sub1_B = {B1 B2 B3 [] B5};
 save sub1_intercept sub1_intercept
 save sub1_B sub1_B
