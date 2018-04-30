@@ -223,9 +223,12 @@ for subj = 1:3
         end
     end
 end
-
+%%
 for subj = 1:3
     for i = 1:5
-        predicted_dg{subj}(:,i) = knnfinal{i,subj}
+        predicted_dg{subj}(:,i) = knnfinal{i,subj};
+        if i == 4
+            predicted_dg{subj}(:,i) = zeros(size(knnfinal{1,subj},2),1);
+        end
     end
 end
