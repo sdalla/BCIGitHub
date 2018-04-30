@@ -1,6 +1,6 @@
-% for this data set, the band-specific ECoG signals were generated using 
+% for this data set, the band-specific ECoG signals were generated using
 % equiripple finite impulse response (FIR) filters by setting their band-pass
-% specifications as: sub-bands (1-60 Hz), gamma band (60-100 Hz), and fast 
+% specifications as: sub-bands (1-60 Hz), gamma band (60-100 Hz), and fast
 % gamma band (100-200 Hz)
 % testing on sub1 only, for now
 %% load data
@@ -33,7 +33,7 @@ v = 62 - length(ch_remove);
 
 %% break into freq bands using FIR filters and filterDesigner
 % filter1 has passband cutoffs of 1 and 60Hz, stopband db of 50 pass of 1
-% stopsbands are 0.5Hz above/below 
+% stopsbands are 0.5Hz above/below
 
 temp = load('Filter1.mat');
 Filter1 = temp.Filter1;
@@ -42,7 +42,7 @@ Filter2 = temp.Filter2;
 temp = load('Filter3.mat');
 Filter3 = temp.Filter3;
 
-for i = 1:v   
+for i = 1:v
     sub1_1_60filt{i} = filtfilt(Filter1,1.0,Sub1_Training_ecog_ch{1,i});
     sub1_60_100filt{i} = filtfilt(Filter2,1.0,Sub1_Training_ecog_ch{1,i});
     sub1_100_200filt{i} = filtfilt(Filter3,1.0,Sub1_Training_ecog_ch{1,i});
@@ -63,7 +63,7 @@ for i = 1:v
 end
 
 %% Constructing a new X (R) matrix
-N = 4; % time windows 
+N = 4; % time windows
 f = 3; % 6 features
 sub1X = ones(5999,v*N*f+1);
 sub1XTest = ones(5999,v*N*f+1);
@@ -76,7 +76,6 @@ for j = 1:v
 end
 
 sub1X(1:N-1,:) = [];
-sub1XTest(1:N-1,:) = [];
 
 %% Test R
 xLen = 147500;
@@ -95,7 +94,7 @@ for j = 1:v
 end
 
 sub1XTest(1:N-1,:) = [];
-%% Calculation 
+%% Calculation
 sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1DataGlove{4} sub1DataGlove{5}];
 
 [B1, FitInfo1] = lasso(sub1X,sub1fingerflexion(N:end,1));
@@ -127,96 +126,53 @@ sub1Spline1 = spline(50.*(1:length(lassTestPred1)),lassTestPred1',(50:50*length(
 sub1Pad1 = [zeros(1,200) sub1Spline1 zeros(1,49)];
 sub1Final1 = sub1Pad1';
 
-
 sub1Spline2 = spline(50.*(1:length(lassTestPred2)),lassTestPred2',(50:50*length(lassTestPred2)));
 sub1Pad2 = [zeros(1,200) sub1Spline2 zeros(1,49)];
 sub1Final2 = sub1Pad2';
 
-
-
 sub1Spline3 = spline(50.*(1:length(lassTestPred3)),lassTestPred3',(50:50*length(lassTestPred3)));
 sub1Pad3 = [zeros(1,200) sub1Spline3 zeros(1,49)];
 sub1Final3 = sub1Pad3';
-
-
 
 sub1Spline5 = spline(50.*(1:length(lassTestPred5)),lassTestPred5',(50:50*length(lassTestPred5)));
 sub1Pad5 = [zeros(1,200) sub1Spline5 zeros(1,49)];
 sub1Final5 = sub1Pad5';
 
 %% filtering w medfilt
-sub1Final1 = medfilt1(sub1Final1(:,1),1000);
-sub1Final2 = medfilt1(sub1Final2(:,1),1000);
-sub1Final3 = medfilt1(sub1Final3(:,1),1000);
-sub1Final5 = medfilt1(sub1Final5(:,1),1000);
-sub1chp2 = [sub1Final1 sub1Final2 sub1Final3 zeros(147500,1) sub1Final5];
+% sub1Final1 = medfilt1(sub1Final1(:,1),1000);
+% sub1Final2 = medfilt1(sub1Final2(:,1),1000);
+% sub1Final3 = medfilt1(sub1Final3(:,1),1000);
+% sub1Final5 = medfilt1(sub1Final5(:,1),1000);
+sub1knn = [sub1Final1 sub1Final2 sub1Final3 zeros(147500,1) sub1Final5];
 
 %% knn
-clc;
-clear all;
-load('sub1checkpoint2a.mat');
-load('Sub1_Training_dg.mat');
-labelMatrix = NaN(size(Sub1_Training_dg{1},1),5);
-sub1knn = NaN(size(sub1chp2,1),5);
 
-for j = 1:5
-    for i = 1:size(Sub1_Training_dg{1},1)
-        if Sub1_Training_dg{j}(i) > .5
-            labelMatrix(i,j) = 1;
-        else labelMatrix(i,j) = 0;
-        end
-    end
-    knnmodel = knnclassify(sub1chp2(:,j),Sub1_Training_dg{j},labelMatrix(:,j));
-    sub1knn(:,j) = sub1chp2(:,j).*knnmodel;
+for i = 1:5
+    [idx1,c1] = kmeans(Sub1_Training_dg{i},2);
+    [sortc, idxc] = sort(c1);
+    idx{i} = idx1;
+    c{i} = sortc;
+    
+    knnmodel{i} = knnclassify(sub1knn(:,i),Sub1_Training_dg{i},idx{i});
 end
 
+sub1Filt1 = medfilt1(sub1Final1(:,1),1000);
+sub1Filt2 = medfilt1(sub1Final2(:,1),1000);
+sub1Filt3 = medfilt1(sub1Final3(:,1),1000);
+sub1Filt5 = medfilt1(sub1Final5(:,1),1000);
+sub1Filt = [sub1Filt1 sub1Filt2 sub1Filt3 zeros(147500,1) sub1Filt5];
 
-%% saving
-save sub1knn sub1knn
-
-%% 
-%% knn sub 2
-clc;
-clear all;
-load('sub2checkpoint2a.mat');
-load('Sub2_Training_dg.mat');
-labelMatrix = NaN(size(Sub2_Training_dg{1},1),5);
-sub2knn = NaN(size(sub2chp2,1),5);
-
-for j = 1:5
-    for i = 1:size(Sub2_Training_dg{1},1)
-        if Sub2_Training_dg{j}(i) > .5
-            labelMatrix(i,j) = 1;
-        else labelMatrix(i,j) = 0;
+for i = 1:5
+    for j = 1:length(sub1Filt1)
+        if knnmodel{i}(j) == idx{i}(1)
+            knnfinal{i}(j) = sub1Filt(j,i);
+        else
+            knnfinal{i}(j) = sub1knn(j,i);
         end
     end
-    knnmodel = knnclassify(sub2chp2(:,j),Sub2_Training_dg{j},labelMatrix(:,j));
-    sub2knn(:,j) = sub2chp2(:,j).*knnmodel;
 end
 
-
 %% saving
-save sub2knn sub2knn
+sub1knn2 = [knnfinal{1}' knnfinal{2}' knnfinal{3}' knnfinal{4}' knnfinal{5}'];
+save sub1knn2 sub1knn2
 
-%% knn sub 3
-clc;
-clear all;
-load('sub3checkpoint2a.mat');
-load('Sub3_Training_dg.mat');
-labelMatrix = NaN(size(Sub3_Training_dg{1},1),5);
-sub3knn = NaN(size(sub3chp2,1),5);
-
-for j = 1:5
-    for i = 1:size(Sub3_Training_dg{1},1)
-        if Sub3_Training_dg{j}(i) > .5
-            labelMatrix(i,j) = 1;
-        else labelMatrix(i,j) = 0;
-        end
-    end
-    knnmodel = knnclassify(sub3chp2(:,j),Sub3_Training_dg{j},labelMatrix(:,j));
-    sub3knn(:,j) = sub3chp2(:,j).*knnmodel;
-end
-
-
-%% saving
-save sub3knn sub3knn
