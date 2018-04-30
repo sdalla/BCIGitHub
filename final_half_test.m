@@ -140,14 +140,36 @@ sub1Final1 = medfilt1(sub1Final1(:,1),1000);
 % classified as
 % Next steps: use output of kmeans (idx classification as 1 or 2) to use
 % knn and classify as moving or not
-sub1chp2 = load('sub1checkpoint2.mat');
-sub1dg1 = Sub1_Training_dg{1}(1:300000-length(sub1chp2(:,1))-1);
+%load('sub1checkpoint2.mat');
+sub1dg1 = Sub1_Training_dg{1}(1:length(sub1Final1));
 [idx,c] = kmeans(sub1dg1,2);
-[sortc, idxc] = sort(c); %sort outcomes to determine color labels
+%[sortc, idxc] = sort(c); %sort outcomes to determine color labels
+idx = idx-1;
 
+knnmodel = knnclassify(sub1Pad1',sub1dg1,idx);
 
-knnmodel = knnclassify(sub1Final1,Sub1_Training_dg{1}(1:300000-length(sub1Final1)-1),idx);
+knnfinal = knnmodel.*sub1Pad1';
 
+unfilt = sub1Pad1';
+filtered = medfilt1(sub1Final1(:,1),100);
+
+for i = 1:length(knnmodel)
+    if knnmodel(i) == 0
+        knnfinal(i) = filtered(i);
+    else
+        knnfinal(i) = unfilt(i);
+    end
+end
+plot(knnfinal)
+hold on
+plot(Sub1_Training_dg{1}(length(sub1Final1)+1:end))
+
+plot(knnfinal)
+
+legend('actual','knn')
+
+corr(Sub1_Training_dg{1}(length(sub1Final1)+1:end),knnfinal)
+corr(Sub1_Training_dg{1}(length(sub1Final1)+1:end), sub1Final1)
 %% knn
 % Attempt 1 at classifying predicted dg as moving or not moving
 % Label matrix is for Training dg - 1 if above threshold (determined based
