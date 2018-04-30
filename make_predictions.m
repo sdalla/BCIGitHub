@@ -1,6 +1,4 @@
 function [predicted_dg] = make_predictions(test_ecog)
-
-%
 % Inputs: test_ecog - 3 x 1 cell array containing ECoG for each subject, where test_ecog{i} 
 % to the ECoG for subject i. Each cell element contains a N x M testing ECoG,
 % where N is the number of samples and M is the number of EEG channels.
@@ -60,11 +58,8 @@ disp('pp');
 %% Feature extraction
 % Filter data
 load('Filter1.mat');
-%Filter1 = temp.Filter1;
 load('Filter2.mat');
-%Filter2 = temp.Filter2;
 load('Filter3.mat');
-%Filter3 = temp.Filter3;
 
 % filter subject 1
 for i = 1:v1
