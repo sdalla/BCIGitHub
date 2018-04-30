@@ -166,25 +166,28 @@ for subj = 1:3
     
     %initialize the predicted dataglove matrix
     yhat = zeros(size(test_ecog{1},1),5);
-    
+    disp(subj);
     %for each finger
     for i = 1:5 
         if i == 4
             yhat(:,i) = 0;
             continue
         end
+        disp('a');
         % predict dg based on ECOG for each finger
         predy = testset*B{i,subj} + repmat(intercept1{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
-        
+        disp('b');
         % spline the data
         subSpline = spline(50.*(1:length(predy)),predy',(50:50*length(predy)));
         padSpline = [zeros(1,200) subSpline zeros(1,49)];
-        
+        disp('c');
         % filter predicted finger positions
         yhat(:,i) = medfilt1(padSpline,100);
-        disp('1');
+        disp('d');
+        disp(i);
     end
+    
     predicted_dg{subj} = yhat;
 end
 disp('lp');
