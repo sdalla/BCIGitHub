@@ -21,7 +21,6 @@ function [predicted_dg] = make_predictions_knn(test_ecog)
 % each subject and finger - called B
 % (2) a 5x3 (finger x subject) cell array each containing the lasso output
 % for incercept output for each subject and finger - called intercept
-test_ecog = leaderboard;
 load B.mat
 load intercept.mat
 %% Pre-processing ecog signal
