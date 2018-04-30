@@ -23,6 +23,11 @@ function [predicted_dg] = make_predictions(test_ecog)
 % for incercept output for each subject and finger - called intercept
 load B.mat
 load intercept1.mat
+load Sub1_Leaderboard_ecog
+load Sub2_Leaderboard_ecog
+load Sub3_Leaderboard_ecog
+test_ecog = {Sub1_Leaderboard_ecog Sub2_Leaderboard_ecog Sub3_Leaderboard_ecog};
+
 %% Pre-processing ecog signal
 % Sub 1 Channel Elimination
 ch_remove1 = [55 21 44 52 18 27 40 49]; %remove channels found in other mat file
@@ -30,7 +35,7 @@ channel1 = 1:62;
 channel1(ch_remove1) = [];
 ind = 1;
 for j = channel1
-    Sub1_ecog_ch{ind} = test_ecog{1}(:,j);
+    Sub1_ecog_ch{ind} = cell2mat(test_ecog{1}(:,j));
     ind = ind + 1;
 end
 v1 = size(Sub1_ecog_ch,2);
@@ -41,7 +46,7 @@ channel2 = 1:48;
 channel2(ch_remove2) = [];
 ind = 1;
 for j = channel2
-    Sub2_ecog_ch{ind} = test_ecog{2}(:,j);
+    Sub2_ecog_ch{ind} = cell2mat(test_ecog{2}(:,j));
     ind = ind + 1;
 end
 v2 = size(Sub2_ecog_ch,2);
@@ -52,11 +57,11 @@ channel3 = 1:64;
 channel3(ch_remove3) = [];
 ind = 1;
 for j = channel3
-    Sub3_ecog_ch{ind} = test_ecog{3}(:,j);
+    Sub3_ecog_ch{ind} = cell2mat(test_ecog{3}(:,j));
     ind = ind + 1;
 end
 v3 = size(Sub3_ecog_ch,2);
-disp('pp');
+
 %% Feature extraction
 % Filter data
 load('Filter1.mat');
@@ -86,7 +91,7 @@ for i = 1:v3
     sub3_60_100filt{i} = filtfilt(Filter2,1.0,Sub3_ecog_ch{i});
     sub3_100_200filt{i} = filtfilt(Filter3,1.0,Sub3_ecog_ch{i});
 end
-disp('fe');
+
 %% Amplitude Modulation for all Subjects
 f = 3; % 3 features
 N = 4;
@@ -114,8 +119,8 @@ for i = 1:v3
     sub3_60_100amp{i} = MovingWinFeats(sub3_60_100filt{i}, fs, winLen, winDisp, ampFxn);
     sub3_100_200amp{i} = MovingWinFeats(sub3_100_200filt{i}, fs, winLen, winDisp, ampFxn);
 end
-disp('am');
-%% Construct X matrices
+
+% Construct X matrices
 % sub 1 X matrix
 sub1X = ones(NumWins(xLen,fs,winLen,winDisp),v1*N*f+1);
 
@@ -154,15 +159,15 @@ end
 sub3X(1:N-1,:) = [];
 
 X = {sub1X sub2X sub3X};
-disp('cxm');
 %% Linear prediction & post-processing
 % Predict using linear predictor for each subject
-% create cell array with one element for each subject
+%create cell array with one element for each subject
 predicted_dg = cell(3,1);
 
 %for each subject
 for subj = 1:3 
-    testset = X{subj};
+    
+    testset = X{subj}; 
     
     %initialize the predicted dataglove matrix
     yhat = zeros(size(test_ecog{1},1),5);
@@ -174,7 +179,7 @@ for subj = 1:3
             continue
         end
         % predict dg based on ECOG for each finger
-        predy = testset*B{i,subj} + repmat(intercept1{i,subj},size((testset*B{i,subj}),1),1);
+        predy = testset*B{i,subj} + repmat(Intercept{i,subj},size((testset*B{i,subj}),1),1);
         predy = predy(:,1);
         
         % spline the data
@@ -182,9 +187,9 @@ for subj = 1:3
         padSpline = [zeros(1,200) subSpline zeros(1,49)];
         
         % filter predicted finger positions
-        yhat(:,i) = medfilt1(padSpline,100);
-        disp('1');
+        yhat(:,i) = medfilt1(padSpline,1000);
+        
     end
     predicted_dg{subj} = yhat;
 end
-disp('lp');
+
