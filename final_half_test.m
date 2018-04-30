@@ -147,7 +147,6 @@ sub1dg1 = Sub1_Training_dg{1}(1:length(sub1Final1));
 idx = idx-1;
 
 knnmodel = knnclassify(sub1Pad1',sub1dg1,idx);
-
 knnfinal = knnmodel.*sub1Pad1';
 
 unfilt = sub1Pad1';
@@ -160,12 +159,11 @@ for i = 1:length(knnmodel)
         knnfinal(i) = unfilt(i);
     end
 end
-plot(knnfinal)
+figure;
 hold on
-plot(Sub1_Training_dg{1}(length(sub1Final1)+1:end))
-
-plot(knnfinal)
-
+plot(Sub1_Training_dg{1}(length(sub1Final1)+1:end));
+plot(knnfinal);
+hold off
 legend('actual','knn')
 
 corr(Sub1_Training_dg{1}(length(sub1Final1)+1:end),knnfinal)
