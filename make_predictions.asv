@@ -23,11 +23,9 @@ function [predicted_dg] = make_predictions(test_ecog)
 % for incercept output for each subject and finger - called intercept
 load B.mat
 load intercept1.mat
-load Sub1_Leaderboard_ecog
-load Sub2_Leaderboard_ecog
-load Sub3_Leaderboard_ecog
+load
 test_ecog = {Sub1_Leaderboard_ecog Sub2_Leaderboard_ecog Sub3_Leaderboard_ecog};
-
+    
 %% Pre-processing ecog signal
 % Sub 1 Channel Elimination
 ch_remove1 = [55 21 44 52 18 27 40 49]; %remove channels found in other mat file
@@ -79,11 +77,10 @@ for i = 1:v1
 end
 
 % filter subject 2
-k = 0;
-for k = 1:v2
-    sub2_1_60filt{k} = filtfilt(Filter1,1.0,Sub2_ecog_ch{k});
-    sub2_60_100filt{k} = filtfilt(Filter2,1.0,Sub2_ecog_ch{k});
-    sub2_100_200filt{k} = filtfilt(Filter3,1.0,Sub2_ecog_ch{k});
+for i = 1:v2
+    sub2_1_60filt{i} = filtfilt(Filter1,1.0,Sub2_ecog_ch{i});
+    sub2_60_100filt{i} = filtfilt(Filter2,1.0,Sub2_ecog_ch{i});
+    sub2_100_200filt{i} = filtfilt(Filter3,1.0,Sub2_ecog_ch{i});
 end
 
 % filter subject 3
