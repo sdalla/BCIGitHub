@@ -9,19 +9,13 @@ outliers2 = [21 38];
 outliers3 = [];
 %% Identifying channels with Excessive Line Noise
 % Pass in data cell array, any outliers manually found, and num channels
-eln1Channels = ExcLineNoise(Sub1_Training_ecog,outliers1,v1);
-eln2Channels = ExcLineNoise(Sub2_Training_ecog,outliers2,v2);
-eln3Channels = ExcLineNoise(Sub3_Training_ecog,outliers3,v3);
+eln1Channels = ExcLineNoise(Sub1_Training_ecog,outliers,v);
 
 %% Identify channels with Abnormal Amplitude Distributions
 % Pass in data cell array, any outliers manually found, and num channels
-aad1Channels = AbnormAmpDist(Sub1_Training_ecog,outliers1,v1);
-aad2Channels = AbnormAmpDist(Sub2_Training_ecog,outliers2,v2);
-aad3Channels = AbnormAmpDist(Sub3_Training_ecog,outliers3,v3);
+aadChannels = AbnormAmpDist(Sub1_Training_ecog,outliers,v);
 
-excl1Channels = [eln1Channels aad1Channels];
-excl2Channels = [eln2Channels aad2Channels];
-excl3Channels = [eln3Channels aad3Channels];
+exclChannels = [elnChannels aadChannels];
 %% Numwins
 NumWins = @(xLen, fs, winLen, winDisp) length(0:winDisp*fs:xLen)-(winLen/winDisp);
 
