@@ -100,11 +100,9 @@ sub1fingerflexion = [sub1DataGlove{1} sub1DataGlove{2} sub1DataGlove{3} sub1Data
 [B1, FitInfo1] = lasso(sub1X,sub1fingerflexion(N:end,1));
 lassTestPred1 = sub1XTest*B1 + repmat(FitInfo1.Intercept,size((sub1XTest*B1),1),1);
 
-disp('lasso 1 done')
 [B2, FitInfo2] = lasso(sub1X,sub1fingerflexion(N:end,2));
 lassTestPred2 = sub1XTest*B2 + repmat(FitInfo2.Intercept,size((sub1XTest*B2),1),1);
 
-disp('lasso 2 done')
 [B3, FitInfo3] = lasso(sub1X,sub1fingerflexion(N:end,3));
 lassTestPred3 = sub1XTest*B3 + repmat(FitInfo3.Intercept,size((sub1XTest*B3),1),1);
 
